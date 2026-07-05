@@ -10,6 +10,7 @@ use App\Application\DTO\RedirectPageResponse;
 use App\Application\DTO\ResponsePayloadInterface;
 use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
@@ -42,7 +43,7 @@ final readonly class RedirectResponder implements ResponderInterface
         return $response;
     }
 
-    public function respondError(ErrorResponse $error): Response
+    public function respondError(ErrorResponse $error, ?Request $request = null): Response
     {
         return new RedirectResponse('/', Response::HTTP_FOUND);
     }

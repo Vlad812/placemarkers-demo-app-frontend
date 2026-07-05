@@ -7,6 +7,7 @@ namespace App\Infrastructure\Http\Responder;
 use App\Application\DTO\ErrorResponse;
 use App\Application\DTO\ResponsePayloadInterface;
 use App\Application\DTO\StringPayload;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 final readonly class PlainTextResponder implements ResponderInterface
@@ -20,7 +21,7 @@ final readonly class PlainTextResponder implements ResponderInterface
         return new Response($payload->content, $payload->getStatusCode());
     }
 
-    public function respondError(ErrorResponse $error): Response
+    public function respondError(ErrorResponse $error, ?Request $request = null): Response
     {
         $message = $error->message;
 

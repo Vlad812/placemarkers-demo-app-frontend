@@ -9,6 +9,7 @@ use App\Application\DTO\HtmlPageResponse;
 use App\Application\DTO\ResponsePayloadInterface;
 use App\Infrastructure\Http\Responder\AbstractPageResponder;
 use App\Infrastructure\Http\Responder\RedirectResponder;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Twig\Environment;
@@ -36,10 +37,16 @@ final readonly class ConfirmEmailResponder extends AbstractPageResponder
         return parent::respond($payload);
     }
 
-    public function respondError(ErrorResponse $error): Response
+    public function respondError(ErrorResponse $error, ?Request $request = null): Response
     {
+        $context = $error->context;
+
+        if ($request !== null) {
+            $context = array_merge($this->buildErrorContext($request), $context);
+        }
+
         $context = array_merge(
-            $error->context,
+            $context,
             [
                 'error' => $error->message,
                 'success' => false,

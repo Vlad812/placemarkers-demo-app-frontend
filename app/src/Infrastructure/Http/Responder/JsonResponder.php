@@ -7,6 +7,7 @@ namespace App\Infrastructure\Http\Responder;
 use App\Application\DTO\ErrorResponse;
 use App\Application\DTO\ResponsePayloadInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 
 final readonly class JsonResponder implements ResponderInterface
 {
@@ -27,7 +28,7 @@ final readonly class JsonResponder implements ResponderInterface
         );
     }
 
-    public function respondError(ErrorResponse $error): JsonResponse
+    public function respondError(ErrorResponse $error, ?Request $request = null): JsonResponse
     {
         $body = array_merge($error->context, ['message' => $error->message]);
 
