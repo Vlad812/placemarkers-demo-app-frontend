@@ -6,6 +6,7 @@ namespace App\Infrastructure\Http\Responder\Auth;
 
 use App\Application\DTO\HtmlPageResponse;
 use App\Application\DTO\ResponsePayloadInterface;
+use App\Infrastructure\Http\Responder\AbstractPageResponder;
 use Symfony\Component\HttpFoundation\Response;
 
 final readonly class LoginResponder extends AbstractPageResponder

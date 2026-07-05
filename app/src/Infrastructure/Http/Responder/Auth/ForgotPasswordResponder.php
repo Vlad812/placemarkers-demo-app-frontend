@@ -6,10 +6,11 @@ namespace App\Infrastructure\Http\Responder\Auth;
 
 use App\Application\DTO\HtmlPageResponse;
 use App\Application\DTO\ResponsePayloadInterface;
+use App\Infrastructure\Http\Responder\AbstractPageResponder;
+use App\Infrastructure\Http\Responder\RedirectResponder;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Twig\Environment;
-use App\Infrastructure\Http\Responder\RedirectResponder;
 
 final readonly class ForgotPasswordResponder extends AbstractPageResponder
 {

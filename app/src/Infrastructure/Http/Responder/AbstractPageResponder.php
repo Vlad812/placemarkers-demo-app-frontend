@@ -2,14 +2,12 @@
 
 declare(strict_types=1);
 
-namespace App\Infrastructure\Http\Responder\Auth;
+namespace App\Infrastructure\Http\Responder;
 
 use App\Application\DTO\ErrorResponse;
 use App\Application\DTO\HtmlPageResponse;
 use App\Application\DTO\RedirectPageResponse;
 use App\Application\DTO\ResponsePayloadInterface;
-use App\Infrastructure\Http\Responder\RedirectResponder;
-use App\Infrastructure\Http\Responder\ResponderInterface;
 use LogicException;
 use Symfony\Component\HttpFoundation\Response;
 use Twig\Environment;
