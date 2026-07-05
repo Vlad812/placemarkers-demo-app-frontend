@@ -13,11 +13,37 @@ services:
     _defaults:
         autowire: true      # Automatically injects dependencies in your services.
         autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
+        bind:
+            $databaseServiceUrl: '%env(resolve:DATABASE_SERVICE_URL)%'
+            $searchServiceUrl: '%env(resolve:SEARCH_SERVICE_URL)%'
+            $collectionServiceUrl: '%env(resolve:COLLECTION_SERVICE_URL)%'
+            $authServiceUrl: '%env(resolve:AUTH_SERVICE_URL)%'
 
     # makes classes in src/ available to be used as services
     # this creates a service per class whose id is the fully-qualified class name
     App\:
         resource: '../src/'
+
+    # Responders are stateless but marked as non-shared to prevent state regressions.
+    App\Infrastructure\Http\Responder\JsonResponder:
+        shared: false
+    App\Infrastructure\Http\Responder\RedirectResponder:
+        shared: false
+    App\Infrastructure\Http\Responder\PlainTextResponder:
+        shared: false
+    App\Infrastructure\Http\Responder\Auth\:
+        resource: '../src/Infrastructure/Http/Responder/Auth/*'
+        shared: false
+    App\Infrastructure\Http\Responder\Page\:
+        resource: '../src/Infrastructure/Http/Responder/Page/*'
+        shared: false
+
+    App\Infrastructure\Security\SessionTokenExtractor: ~
+
+    lexik_jwt_authentication.extractor.chain_extractor:
+        class: Lexik\Bundle\JWTAuthenticationBundle\TokenExtractor\ChainTokenExtractor
+        arguments:
+            - ['@App\Infrastructure\Security\SessionTokenExtractor']
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones

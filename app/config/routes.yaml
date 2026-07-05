@@ -12,3 +12,10 @@ actions:
         path: ../src/Infrastructure/Http/Action/
         namespace: App\Infrastructure\Http\Action
     type: attribute
+    exclude: ../src/Infrastructure/Http/Action/Api/
+
+api_actions:
+    resource:
+        path: ../src/Infrastructure/Http/Action/Api/
+        namespace: App\Infrastructure\Http\Action\Api
+    type: attribute

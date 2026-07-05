@@ -2,7 +2,7 @@
   "name": "my-frontend",
   "version": "1.0.0",
   "scripts": {
-    "copy-bootstrap": "mkdir -p public/assets/ && cp -r node_modules/bootstrap/dist public/assets/bootstrap && mkdir -p public/assets/jquery && cp node_modules/jquery/dist/jquery.min.js public/assets/jquery/jquery.min.js"
+    "copy-bootstrap": "mkdir -p public/assets/css public/assets/js public/assets/bootstrap/css public/assets/bootstrap/js public/assets/jquery && cp node_modules/bootstrap/dist/css/bootstrap.min.css public/assets/bootstrap/css/bootstrap.min.css && cp node_modules/bootstrap/dist/js/bootstrap.bundle.min.js public/assets/bootstrap/js/bootstrap.bundle.min.js && cp node_modules/jquery/dist/jquery.min.js public/assets/jquery/jquery.min.js"
   },
   "dependencies": {
     "bootstrap": "^5.3.3",
