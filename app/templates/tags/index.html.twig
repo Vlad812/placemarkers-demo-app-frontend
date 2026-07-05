@@ -1,0 +1,78 @@
+{% extends 'layout.html.twig' %}
+
+{% block title %}Мои теги{% endblock %}
+
+{% block content %}
+    <h1 class="h3 mb-4">Мои теги</h1>
+
+    <div class="row">
+        <div class="col-md-4 mb-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Новый тег</h5>
+                </div>
+                <div class="card-body">
+                    <form id="tag-create-form" novalidate>
+                        <div class="mb-3">
+                            <label for="tag-name" class="form-label">Название</label>
+                            <input type="text" class="form-control" id="tag-name" placeholder="Например: Любимое кафе" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="tag-description" class="form-label">Описание</label>
+                            <textarea class="form-control" id="tag-description" rows="3" placeholder="Необязательно"></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">
+                            <span class="btn-label">Добавить</span>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Список тегов</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle">
+                            <thead>
+                                <tr>
+                                    <th>Название</th>
+                                    <th>Описание</th>
+                                    <th class="text-end">Действия</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tags-list">
+                                {% if userTags is empty %}
+                                    <tr id="empty-tags-row">
+                                        <td colspan="3" class="text-center text-muted">
+                                            <em>У вас пока нет тегов</em>
+                                        </td>
+                                    </tr>
+                                {% else %}
+                                    {% for tag in userTags %}
+                                        <tr>
+                                            <td>
+                                                <span class="badge bg-primary rounded-pill px-3 py-2 fw-normal">{{ tag.name }}</span>
+                                            </td>
+                                            <td>{{ tag.description }}</td>
+                                            <td class="text-end">
+                                                <button class="btn btn-sm btn-outline-danger" disabled title="Удаление пока не реализовано">Удалить</button>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                {% endif %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block page_scripts %}
+    <script src="{{ asset('assets/js/tags.js') }}" defer></script>
+{% endblock %}

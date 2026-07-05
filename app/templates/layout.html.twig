@@ -1,0 +1,54 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="{{ path('placemark_create') }}">Placemarkers</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav" aria-controls="mainNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="mainNav">
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                        <li class="nav-item">
+                            <a class="nav-link{% if app.request.attributes.get('_route') == 'placemark_create' %} active{% endif %}" href="{{ path('placemark_create') }}">Добавить метку</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link{% if app.request.attributes.get('_route') == 'placemark_search' %} active{% endif %}" href="{{ path('placemark_search') }}">Поиск</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link{% if app.request.attributes.get('_route') == 'tags_index' %} active{% endif %}" href="{{ path('tags_index') }}">Мои теги</a>
+                        </li>
+                    </ul>
+                    <div class="d-flex align-items-center">
+                        {% if app.user %}
+                            <span class="text-light me-3 small">
+                                <span class="opacity-75">Вы вошли как:</span> <strong class="text-white">{{ app.user.userIdentifier }}</strong>
+                            </span>
+                            <a href="{{ path('auth_logout') }}" class="btn btn-outline-light btn-sm">Выйти</a>
+                        {% else %}
+                            <a href="{{ path('auth_login_page') }}" class="btn btn-outline-light btn-sm me-2">Войти</a>
+                            <a href="{{ path('auth_signup_page') }}" class="btn btn-primary btn-sm">Регистрация</a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main class="flex-grow-1">
+        <div class="container-fluid py-4">
+            {% block content %}{% endblock %}
+        </div>
+    </main>
+
+    <footer class="bg-light border-top py-3 mt-auto">
+        <div class="container-fluid text-center text-muted small">
+            Placemarkers &copy; {{ 'now'|date('Y') }}
+        </div>
+    </footer>
+
+    <script src="{{ asset('assets/jquery/jquery.min.js') }}"></script>
+    <script src="{{ asset('assets/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+    {% block page_scripts %}{% endblock %}
+{% endblock %}

@@ -1,0 +1,350 @@
+{% extends 'layout.html.twig' %}
+
+
+
+{% block title %}Поиск меток{% endblock %}
+
+
+
+{% block content %}
+
+    <h1 class="h3 mb-4">Поиск меток</h1>
+
+
+
+    <section>
+
+        <div
+
+            id="search-map"
+
+            class="search-map"
+
+            data-center-lat="{{ mapCenterLat }}"
+
+            data-center-lon="{{ mapCenterLon }}"
+
+            data-default-radius="{{ defaultRadiusMeters }}"
+
+            data-api-url="{{ path('api_placemarker_search') }}"
+            data-save-url="{{ path('api_placemarker_collection_save') }}"
+            data-collections-url="{{ path('api_placemarker_collection_list') }}"
+
+        ></div>
+
+
+
+        <div class="search-controls mt-3">
+
+            <div class="search-hint mb-3">
+
+                Кликните на карте дважды, чтобы задать центр и радиус области поиска. Окружность можно перетаскивать и изменять размер с помощью маркеров по краям.
+
+            </div>
+
+
+
+            <div class="d-flex flex-wrap align-items-center gap-3">
+                <button type="button" id="search-button" class="btn btn-primary d-flex align-items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search me-2" viewBox="0 0 16 16"><path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0"/></svg>
+                    <span class="btn-label">Найти</span>
+                </button>
+
+                <p id="search-results-count" class="search-results-count mb-0" hidden>
+                    Найдено <strong id="search-results-count-value">0</strong> <span id="search-results-count-label">меток</span>
+                </p>
+
+                <button type="button" id="save-search-button" class="btn btn-outline-success d-flex align-items-center" disabled>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-bookmark me-2" viewBox="0 0 16 16"><path d="M2 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v13.5a.5.5 0 0 1-.74.439L8 13.069l-5.26 2.87A.5.5 0 0 1 2 15.5zm2-1a1 1 0 0 0-1 1v12.566l4.723-2.582a.5.5 0 0 1 .554 0L13 14.566V2a1 1 0 0 0-1-1z"/></svg>
+                    Сохранить поиск
+                </button>
+
+                <div class="ms-auto">
+                    <button type="button" id="show-collections-button" class="btn btn-outline-secondary d-flex align-items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-collection me-2" viewBox="0 0 16 16"><path d="M2.5 3.5a.5.5 0 0 1 0-1h11a.5.5 0 0 1 0 1zm2-2a.5.5 0 0 1 0-1h7a.5.5 0 0 1 0 1zM0 13a1.5 1.5 0 0 0 1.5 1.5h13A1.5 1.5 0 0 0 16 13V6a1.5 1.5 0 0 0-1.5-1.5h-13A1.5 1.5 0 0 0 0 6zm1.5-.5A.5.5 0 0 1 1 12V6a.5.5 0 0 1 .5-.5h13a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-.5.5z"/></svg>
+                        Сохранённые поиски
+                        <span id="collections-count-badge" class="badge bg-secondary ms-2 rounded-pill">0</span>
+                    </button>
+                </div>
+            </div>
+
+        </div>
+
+        <div id="search-filter-toolbar" class="search-filter-toolbar mt-3">
+            <div class="search-filter-toolbar__header">
+                <div class="search-filter-toolbar__title">
+                    <span class="search-filter-toolbar__icon" aria-hidden="true">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" viewBox="0 0 16 16"><path d="M1.5 1.5A.5.5 0 0 1 2 1h12a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.128.334L10 8.692V13.5a.5.5 0 0 1-.342.474l-3 1A.5.5 0 0 1 6 14.5V8.692L1.628 3.834A.5.5 0 0 1 1.5 3.5zm1 .5v1.308l4.372 4.858A.5.5 0 0 1 7 8.5v5.306l2-.666V8.5a.5.5 0 0 1 .128-.334L13.5 3.308V2z"/></svg>
+                    </span>
+                    <div>
+                        <span class="search-filter-toolbar__label">Фильтры поиска</span>
+                        <span class="search-filter-toolbar__subtitle">Уточните результаты по тегам и типам меток</span>
+                    </div>
+                </div>
+                <button type="button" id="search-filters-reset-button" class="btn btn-sm search-filter-toolbar__reset" disabled>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" class="me-1" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2z"/><path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466"/></svg>
+                    Сбросить все
+                </button>
+            </div>
+
+            <div class="search-filter-toolbar__body">
+                <div class="search-filter-toolbar__groups">
+                    <div class="search-filter-group">
+                        <div class="search-filter-group__header">
+                            <span class="search-filter-group__label">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16"><path d="M6 4.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m-1 0a.5.5 0 1 0-1 0 .5.5 0 0 0 1 0"/><path d="M2 1h4.586a1 1 0 0 1 .707.293l7 7a1 1 0 0 1 0 1.414l-4.586 4.586a1 1 0 0 1-1.414 0l-7-7A1 1 0 0 1 1 6.586V2a1 1 0 0 1 1-1m0 5.586 7 7L13.586 9l-7-7H2z"/></svg>
+                                Теги
+                            </span>
+                            <button type="button" id="search-tags-filter-button" class="btn btn-sm search-filter-add-btn">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" viewBox="0 0 16 16"><path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"/></svg>
+                                Выбрать
+                            </button>
+                        </div>
+                        <div id="search-selected-tags-container" class="search-filter-chips"></div>
+                        <p id="search-tags-empty-hint" class="search-filter-group__hint mb-0">Любые теги</p>
+                    </div>
+
+                    <div class="search-filter-group">
+                        <div class="search-filter-group__header">
+                            <span class="search-filter-group__label">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16"><path d="M8.235 1.559a.5.5 0 0 0-.47 0l-7.5 4a.5.5 0 0 0 0 .882L7.5 10.118a.5.5 0 0 0 .47 0l7.5-4a.5.5 0 0 0 0-.882zm-1.5 4.653L2.187 5.5 7.5 2.118 12.813 5.5 8.735 6.212z"/><path d="M1.5 8.5a.5.5 0 0 0-.5.5v4a.5.5 0 0 0 .5.5h13a.5.5 0 0 0 .5-.5v-4a.5.5 0 0 0-.5-.5h-13zm13 1H2v3h12.5z"/></svg>
+                                Типы меток
+                            </span>
+                            <button type="button" id="search-types-filter-button" class="btn btn-sm search-filter-add-btn">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" viewBox="0 0 16 16"><path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"/></svg>
+                                Выбрать
+                            </button>
+                        </div>
+                        <div id="search-selected-types-container" class="search-filter-chips"></div>
+                        <p id="search-types-empty-hint" class="search-filter-group__hint mb-0">Любой тип</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </section>
+
+
+
+    <section class="placemark-section placemark-section--cards mt-4">
+
+        <div class="placemark-section__header">
+
+            <h2 class="placemark-section__title h5 mb-0">Результаты поиска</h2>
+
+        </div>
+
+        <div class="placemark-section__body">
+
+            <div id="search-results-list" class="row g-2 placemark-saved-list"></div>
+
+            <p class="search-results-empty mb-0">Здесь появятся найденные метки</p>
+
+        </div>
+
+    </section>
+
+
+
+    <div class="modal fade placemark-edit-modal" id="save-search-modal" tabindex="-1" aria-labelledby="save-search-modal-label" aria-hidden="true">
+
+        <div class="modal-dialog modal-dialog-centered placemark-edit-modal-dialog">
+
+            <div class="modal-content placemark-edit-modal-content">
+
+                <div class="modal-header placemark-edit-modal-header">
+
+                    <h5 class="modal-title" id="save-search-modal-label">Сохранить подборку</h5>
+
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+
+                </div>
+
+                <div class="modal-body">
+
+                    <label for="collection-name-input" class="form-label">Название подборки</label>
+
+                    <input
+
+                        type="text"
+
+                        class="form-control"
+
+                        id="collection-name-input"
+
+                        maxlength="255"
+
+                        placeholder="Например: Кафе в центре"
+
+                        autocomplete="off"
+
+                    >
+
+                    <div id="save-search-error" class="invalid-feedback d-block" hidden></div>
+
+                </div>
+
+                <div class="modal-footer placemark-edit-modal-footer justify-content-center gap-2">
+
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Отмена</button>
+
+                    <button type="button" id="save-search-confirm-button" class="btn btn-success">
+
+                        <span class="btn-label">Сохранить</span>
+
+                    </button>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+    <div class="modal fade placemark-edit-modal" id="collections-list-modal" tabindex="-1" aria-labelledby="collections-list-modal-label" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered placemark-edit-modal-dialog">
+            <div class="modal-content placemark-edit-modal-content">
+                <div class="modal-header placemark-edit-modal-header">
+                    <h5 class="modal-title" id="collections-list-modal-label">Сохранённые поиски</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+                </div>
+                <div class="modal-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0 align-middle">
+                            <thead class="table-light">
+                                <tr>
+                                    <th scope="col" class="ps-4">Название</th>
+                                    <th scope="col">Кол-во меток</th>
+                                    <th scope="col">Дата</th>
+                                    <th scope="col" class="text-end pe-4">Действия</th>
+                                </tr>
+                            </thead>
+                            <tbody id="collections-list-tbody">
+                                <tr>
+                                    <td colspan="4" class="text-center py-4 text-muted">Загрузка...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <div class="modal fade placemark-tags-modal" id="search-tags-modal" tabindex="-1" aria-labelledby="search-tags-modal-label" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="search-tags-modal-label">Фильтр по тегам</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="placemark-tags-list d-flex flex-wrap gap-2" id="search-tags-list">
+                        {% if userTags is empty %}
+                            <p class="text-muted w-100 text-center mb-0">У вас пока нет тегов. Создайте их в разделе "Мои теги".</p>
+                        {% else %}
+                            {% for tag in userTags %}
+                                <div>
+                                    <input type="checkbox" class="btn-check search-tag-checkbox" id="search_tag_{{ tag.id }}" value="{{ tag.id }}" data-name="{{ tag.name|e('html_attr') }}" autocomplete="off">
+                                    <label class="btn btn-outline-primary rounded-pill px-3 py-1" for="search_tag_{{ tag.id }}">{{ tag.name }}</label>
+                                </div>
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="modal-footer justify-content-center gap-2">
+                    <button type="button" class="btn btn-outline-secondary" id="search-tags-clear-button">Сбросить</button>
+                    <button type="button" class="btn btn-primary px-4" data-bs-dismiss="modal" id="search-tags-apply-button">Готово</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <div class="modal fade placemark-tags-modal" id="search-types-modal" tabindex="-1" aria-labelledby="search-types-modal-label" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="search-types-modal-label">Фильтр по типу меток</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="placemark-tags-list d-flex flex-wrap gap-2" id="search-types-list">
+                        {% set placemarkerTypes = {
+                            'default': 'default',
+                            'residential': 'жилая недвижимость',
+                            'commercial': 'коммерчерская недвижимость',
+                            'parking': 'парковка',
+                            'cafe': 'кафе',
+                            'restaurant': 'ресторан',
+                            'museum': 'музей',
+                            'marketplace': 'Пункт выдачи marketplace'
+                        } %}
+                        {% for typeId, typeLabel in placemarkerTypes %}
+                            <div>
+                                <input type="checkbox" class="btn-check search-type-checkbox" id="search_type_{{ typeId }}" value="{{ typeId }}" data-label="{{ typeLabel|e('html_attr') }}" autocomplete="off">
+                                <label class="btn btn-outline-primary rounded-pill px-3 py-1" for="search_type_{{ typeId }}">{{ typeLabel }}</label>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="modal-footer justify-content-center gap-2">
+                    <button type="button" class="btn btn-outline-secondary" id="search-types-clear-button">Сбросить</button>
+                    <button type="button" class="btn btn-primary px-4" data-bs-dismiss="modal" id="search-types-apply-button">Готово</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <template id="placemark-saved-card-template">
+
+        <div class="col-6 col-sm-4 col-md-3 col-lg-2">
+
+            <div class="card placemark-saved-card h-100">
+
+                <div class="card-body position-relative text-center p-3">
+
+                    <div class="placemark-saved-pin" aria-hidden="true">📍</div>
+
+                    <div class="placemark-saved-name fw-semibold text-truncate" title=""></div>
+
+                    <div class="placemark-saved-coords mt-1">
+
+                        <div class="placemark-saved-lat text-truncate" title=""></div>
+
+                        <div class="placemark-saved-lon text-truncate" title=""></div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </template>
+
+{% endblock %}
+
+
+
+{% block page_scripts %}
+
+    <script src="https://api-maps.yandex.ru/2.1/?lang=ru_RU" defer></script>
+
+    <script src="{{ asset('assets/js/ymap-resize.js') }}" defer></script>
+
+    <script src="{{ asset('assets/js/circle-handler.js') }}" defer></script>
+
+    <script src="{{ asset('assets/js/placemark-search.js') }}" defer></script>
+
+{% endblock %}
+

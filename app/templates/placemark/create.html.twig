@@ -1,0 +1,191 @@
+{% extends 'layout.html.twig' %}
+
+{% block title %}Добавление метки{% endblock %}
+
+{% block content %}
+    <h1 class="h3 mb-4">Добавление метки</h1>
+
+    <section class="placemark-section placemark-section--map mb-4">
+        <div
+            id="placemark-map"
+            class="placemark-map"
+            data-center-lat="{{ mapCenterLat }}"
+            data-center-lon="{{ mapCenterLon }}"
+            data-api-url="{{ path('api_placemarker_create') }}"
+            data-api-base="{{ path('api_placemarker_create') }}"
+            data-initial-placemarkers="{{ savedPlacemarkers|json_encode|e('html_attr') }}"
+        ></div>
+    </section>
+
+    <section id="placemark-new-form" class="placemark-section placemark-section--form mb-4">
+        <div class="placemark-section__header">
+            <h2 class="placemark-section__title h5 mb-0">Новая метка</h2>
+            <p class="placemark-section__hint mb-0">Кликните по карте, заполните поля и сохраните</p>
+        </div>
+        <div class="placemark-section__body">
+            <form class="placemark-form" novalidate>
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label">Название</label>
+                        <input type="text" class="form-control placemark-name" placeholder="Название метки" required>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Широта (lat)</label>
+                        <input type="text" class="form-control placemark-lat coords" placeholder="59.94000000" required>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Долгота (lon)</label>
+                        <input type="text" class="form-control placemark-lon coords" placeholder="30.31000000" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Тип метки</label>
+                        <select class="form-select placemark-type">
+                            <option value="default">default</option>
+                            <option value="residential">жилая недвижимость</option>
+                            <option value="commercial">коммерчерская недвижимость</option>
+                            <option value="parking">парковка</option>
+                            <option value="cafe">кафе</option>
+                            <option value="restaurant">ресторан</option>
+                            <option value="museum">музей</option>
+                            <option value="marketplace">Пункт выдачи marketplace</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6 d-flex flex-column justify-content-end">
+                        <button type="button" class="btn btn-outline-secondary w-100 mb-0" data-bs-toggle="modal" data-bs-target="#placemark-tags-modal">
+                            Добавить теги
+                        </button>
+                        <div id="selected-tags-container" class="mt-2 d-flex flex-wrap gap-1"></div>
+                    </div>
+                    <div class="col-12">
+                        <label class="form-label">Описание</label>
+                        <textarea class="form-control placemark-description" rows="3" placeholder="Описание метки"></textarea>
+                    </div>
+                    <div class="col-12">
+                        <button type="button" class="btn btn-primary placemark-save">
+                            <span class="btn-label">Сохранить</span>
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </section>
+
+    <section class="placemark-section placemark-section--cards">
+        <div class="placemark-section__header">
+            <h2 class="placemark-section__title h5 mb-0">Сохранённые метки</h2>
+            <p class="placemark-section__hint mb-0">Нажмите на карточку, чтобы изменить название и описание</p>
+        </div>
+        <div class="placemark-section__body">
+            <div id="placemark-saved-list" class="row g-2 placemark-saved-list"></div>
+            <p class="placemark-cards-empty mb-0">Пока нет сохранённых меток</p>
+        </div>
+    </section>
+
+    <template id="placemark-saved-card-template">
+        <div class="col-6 col-sm-4 col-md-3 col-lg-1">
+            <div class="card placemark-saved-card h-100" role="button" tabindex="0">
+                <div class="card-body position-relative text-center p-3">
+                    <button type="button" class="btn-close btn-close-sm placemark-saved-remove" aria-label="Удалить"></button>
+                    <div class="placemark-saved-pin" aria-hidden="true">📍</div>
+                    <div class="placemark-saved-name fw-semibold text-truncate" title=""></div>
+                    <div class="placemark-saved-coords mt-1">
+                        <div class="placemark-saved-lat text-truncate" title=""></div>
+                        <div class="placemark-saved-lon text-truncate" title=""></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </template>
+
+    <div class="modal fade placemark-edit-modal" id="placemark-edit-modal" tabindex="-1" aria-labelledby="placemark-edit-modal-label" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered placemark-edit-modal-dialog">
+            <div class="modal-content placemark-edit-modal-content">
+                <div class="modal-header placemark-edit-modal-header">
+                    <h5 class="modal-title" id="placemark-edit-modal-label">Редактирование метки</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="placemark-edit-form" novalidate>
+                        <input type="hidden" id="placemark-edit-id">
+                        <div class="mb-3">
+                            <label for="placemark-edit-name" class="form-label">Название</label>
+                            <input type="text" class="form-control" id="placemark-edit-name" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="placemark-edit-type" class="form-label">Тип метки</label>
+                            <select class="form-select" id="placemark-edit-type">
+                                <option value="default">default</option>
+                                <option value="residential">жилая недвижимость</option>
+                                <option value="commercial">коммерчерская недвижимость</option>
+                                <option value="parking">парковка</option>
+                                <option value="cafe">кафе</option>
+                                <option value="restaurant">ресторан</option>
+                                <option value="museum">музей</option>
+                                <option value="marketplace">Пункт выдачи marketplace</option>
+                            </select>
+                        </div>
+                        <div class="placemark-edit-coords mb-3">
+                            <label class="form-label d-block text-center">Координаты</label>
+                            <div class="row g-2">
+                                <div class="col-6">
+                                    <label for="placemark-edit-lat" class="form-label small text-muted mb-1">Широта (lat)</label>
+                                    <input type="text" class="form-control form-control-sm text-center" id="placemark-edit-lat" readonly>
+                                </div>
+                                <div class="col-6">
+                                    <label for="placemark-edit-lon" class="form-label small text-muted mb-1">Долгота (lon)</label>
+                                    <input type="text" class="form-control form-control-sm text-center" id="placemark-edit-lon" readonly>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mb-0">
+                            <label for="placemark-edit-description" class="form-label">Описание</label>
+                            <textarea class="form-control" id="placemark-edit-description" rows="4" placeholder="Добавьте описание метки"></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer placemark-edit-modal-footer justify-content-center gap-2">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Отмена</button>
+                    <button type="button" class="btn btn-primary px-4" id="placemark-edit-save">
+                        <span class="btn-label">Сохранить</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade placemark-tags-modal" id="placemark-tags-modal" tabindex="-1" aria-labelledby="placemark-tags-modal-label" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="placemark-tags-modal-label">Выберите теги</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="placemark-tags-list d-flex flex-wrap gap-2" id="available-tags-container">
+                        {% if userTags is empty %}
+                            <p class="text-muted w-100 text-center mb-0">У вас пока нет тегов. Создайте их в разделе "Мои теги".</p>
+                        {% else %}
+                            {% for tag in userTags %}
+                                <div>
+                                    <input type="checkbox" class="btn-check tag-checkbox" id="tag_{{ tag.id }}" value="{{ tag.id }}" data-name="{{ tag.name|e('html_attr') }}" autocomplete="off">
+                                    <label class="btn btn-outline-primary rounded-pill px-3 py-1" for="tag_{{ tag.id }}">{{ tag.name }}</label>
+                                </div>
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="modal-footer justify-content-center gap-2">
+                    <button type="button" class="btn btn-primary px-4" data-bs-dismiss="modal" id="save-tags-button">
+                        Готово
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block page_scripts %}
+    <script src="https://api-maps.yandex.ru/2.1/?lang=ru_RU" defer></script>
+    <script src="{{ asset('assets/js/ymap-resize.js') }}" defer></script>
+    <script src="{{ asset('assets/js/placemark-create.js') }}" defer></script>
+{% endblock %}
