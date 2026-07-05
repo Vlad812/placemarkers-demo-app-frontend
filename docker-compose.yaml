@@ -10,6 +10,7 @@ services:
       - ./app:/var/www/html
     environment:
       APP_ENV: dev
+      APP_DEBUG: 1
       APP_SECRET: 75914121030ad559bbae482519258ce1
       APP_RUNTIME: Baldinof\RoadRunnerBundle\Runtime\Runtime
       VAR_DUMPER_FORMAT: 'server'
@@ -17,11 +18,11 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.docker.network=place_markers_net"
-      - "traefik.http.routers.app-frontend-app.rule=Host(`placemarkers.local`)"
-      - "traefik.http.routers.app-frontend-app.entrypoints=web"
-      - "traefik.http.services.app-frontend-app.loadbalancer.server.port=8080"
+      - "traefik.http.routers.app-frontend-pm.rule=Host(`placemarkers.local`)"
+      - "traefik.http.routers.app-frontend-pm.entrypoints=web"
+      - "traefik.http.services.app-frontend-pm.loadbalancer.server.port=8080"
     healthcheck:
-      test: ["CMD", "curl", "-fsS", "http://127.0.0.1:8080/"]
+      test: ["CMD", "curl", "-fsS", "http://127.0.0.1:8080/health"]
       interval: 10s
       timeout: 5s
       retries: 5

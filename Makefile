@@ -2,7 +2,7 @@ APP_FRONTEND_DIR := $(patsubst %/,%,$(dir $(abspath $(lastword $(MAKEFILE_LIST))
 PROJECT_ROOT := $(abspath $(APP_FRONTEND_DIR)/../..)
 include $(PROJECT_ROOT)/config.mk
 
-.PHONY: app-frontend-init app-frontend-build app-frontend-up app-frontend-down
+.PHONY: app-frontend-init app-frontend-build app-frontend-up app-frontend-down app-frontend-cache-clear
 
 app-frontend-init:
 	@echo "🏗️  Установка bootstrap и JQ..."
@@ -36,3 +36,7 @@ app-frontend-up:
 app-frontend-down:
 	@echo down app-frontend
 	docker compose -f $(APP_FRONTEND_DIR)/docker-compose.yaml -p $(PROJECT_GROUP_MAIN_SERVICE) down -v
+
+app-frontend-cache-clear:
+	@echo clear Symfony cache
+	docker compose -f $(APP_FRONTEND_DIR)/docker-compose.yaml -p $(PROJECT_GROUP_MAIN_SERVICE) run --rm app-frontend-pm-php-cli sh -c "rm -rf var/cache/* && php bin/console cache:warmup"

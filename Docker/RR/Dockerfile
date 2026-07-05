@@ -7,6 +7,7 @@ RUN apt-get update && apt-get install -y \
     curl \
     git \
     unzip \
+    libonig-dev \
     $PHPIZE_DEPS \
     && docker-php-ext-install sockets mbstring \
     && rm -rf /var/lib/apt/lists/*
