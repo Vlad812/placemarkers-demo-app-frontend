@@ -27,54 +27,39 @@ abstract class AbstractAction
         try {
             return $this->handleRequest($request);
         } catch (ServiceUnavailableException $exception) {
-            return $this->responder->respondError(new ErrorResponse(
-                message: $exception->getMessage(),
-                statusCode: Response::HTTP_SERVICE_UNAVAILABLE,
-                context: $this->buildErrorContext($request),
-            ));
+            return $this->responder->respondError(
+                new ErrorResponse(
+                    message: $exception->getMessage(),
+                    statusCode: Response::HTTP_SERVICE_UNAVAILABLE,
+                ),
+                $request,
+            );
         } catch (ApiException $exception) {
-            return $this->responder->respondError(new ErrorResponse(
-                message: $exception->getMessage(),
-                statusCode: $exception->getStatusCode(),
-                context: $this->buildErrorContext($request, $exception->getContext()),
-            ));
+            return $this->responder->respondError(
+                new ErrorResponse(
+                    message: $exception->getMessage(),
+                    statusCode: $exception->getStatusCode(),
+                    context: $exception->getContext(),
+                ),
+                $request,
+            );
         } catch (UnauthorizedException $exception) {
-            return $this->responder->respondError(new ErrorResponse(
-                message: $exception->getMessage(),
-                statusCode: Response::HTTP_UNAUTHORIZED,
-                context: $this->buildErrorContext($request),
-            ));
+            return $this->responder->respondError(
+                new ErrorResponse(
+                    message: $exception->getMessage(),
+                    statusCode: Response::HTTP_UNAUTHORIZED,
+                ),
+                $request,
+            );
         } catch (FormValidationException $exception) {
-            return $this->responder->respondError(new ErrorResponse(
-                message: $exception->getMessage(),
-                statusCode: Response::HTTP_UNPROCESSABLE_ENTITY,
-                context: $exception->getContext(),
-            ));
+            return $this->responder->respondError(
+                new ErrorResponse(
+                    message: $exception->getMessage(),
+                    statusCode: Response::HTTP_UNPROCESSABLE_ENTITY,
+                    context: $exception->getContext(),
+                ),
+                $request,
+            );
         }
-    }
-
-    /**
-     * @param array<string, mixed> $extra
-     *
-     * @return array<string, mixed>
-     */
-    protected function buildErrorContext(Request $request, array $extra = []): array
-    {
-        $context = array_merge(
-            $request->query->all(),
-            $request->request->all(),
-        );
-
-        foreach ($request->attributes->all() as $key => $value) {
-            if (!is_string($key) || str_starts_with($key, '_')) {
-                continue;
-            }
-
-            if (is_scalar($value) || $value === null) {
-                $context[$key] = $value;
-            }
-        }
-
-        return array_merge($context, $extra);
     }
 }
