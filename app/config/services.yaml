@@ -13,11 +13,6 @@ services:
     _defaults:
         autowire: true      # Automatically injects dependencies in your services.
         autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
-        bind:
-            $databaseServiceUrl: '%env(resolve:DATABASE_SERVICE_URL)%'
-            $searchServiceUrl: '%env(resolve:SEARCH_SERVICE_URL)%'
-            $collectionServiceUrl: '%env(resolve:COLLECTION_SERVICE_URL)%'
-            $authServiceUrl: '%env(resolve:AUTH_SERVICE_URL)%'
 
     # makes classes in src/ available to be used as services
     # this creates a service per class whose id is the fully-qualified class name
@@ -44,6 +39,27 @@ services:
         class: Lexik\Bundle\JWTAuthenticationBundle\TokenExtractor\ChainTokenExtractor
         arguments:
             - ['@App\Infrastructure\Security\SessionTokenExtractor']
+
+    App\Infrastructure\Service\Api\Client\AuthApiClient:
+        arguments:
+            $authClient: '@auth.client'
+
+    App\Infrastructure\Service\Api\Client\PlacemarkerApiClient:
+        arguments:
+            $databaseClient: '@database.client'
+
+    App\Infrastructure\Service\Api\Client\SearchApiClient:
+        arguments:
+            $searchClient: '@search.client'
+
+    App\Infrastructure\Service\Api\Client\CollectionApiClient:
+        arguments:
+            $collectionClient: '@collection.client'
+
+    App\Application\Port\Api\AuthApiInterface: '@App\Infrastructure\Service\Api\Client\AuthApiClient'
+    App\Application\Port\Api\PlacemarkerApiInterface: '@App\Infrastructure\Service\Api\Client\PlacemarkerApiClient'
+    App\Application\Port\Api\SearchApiInterface: '@App\Infrastructure\Service\Api\Client\SearchApiClient'
+    App\Application\Port\Api\CollectionApiInterface: '@App\Infrastructure\Service\Api\Client\CollectionApiClient'
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones

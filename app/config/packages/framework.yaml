@@ -2,6 +2,17 @@
 framework:
     secret: '%env(APP_SECRET)%'
 
+    http_client:
+        scoped_clients:
+            auth.client:
+                base_uri: '%env(resolve:AUTH_SERVICE_URL)%'
+            database.client:
+                base_uri: '%env(resolve:DATABASE_SERVICE_URL)%'
+            search.client:
+                base_uri: '%env(resolve:SEARCH_SERVICE_URL)%'
+            collection.client:
+                base_uri: '%env(resolve:COLLECTION_SERVICE_URL)%'
+
     # Note that the session will be started ONLY if you read or write from it.
     session:
         handler_id: '%env(REDIS_URL)%'

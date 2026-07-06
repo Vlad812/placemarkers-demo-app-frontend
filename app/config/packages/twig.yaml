@@ -1,5 +1,9 @@
 twig:
     file_name_pattern: '*.twig'
+    globals:
+        mapCenterLat: 59.94
+        mapCenterLon: 30.31
+        defaultRadiusMeters: 1000
 
 when@test:
     twig:
