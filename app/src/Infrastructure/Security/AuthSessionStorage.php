@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Security;
 
+use App\Infrastructure\Security\Event\SessionInvalidatedEvent;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 final readonly class AuthSessionStorage implements AuthSessionStorageInterface
 {
@@ -15,6 +17,7 @@ final readonly class AuthSessionStorage implements AuthSessionStorageInterface
 
     public function __construct(
         private RequestStack $requestStack,
+        private EventDispatcherInterface $eventDispatcher,
     ) {
     }
 
@@ -49,6 +52,7 @@ final readonly class AuthSessionStorage implements AuthSessionStorageInterface
     public function invalidate(): void
     {
         $this->getSession()->invalidate();
+        $this->eventDispatcher->dispatch(new SessionInvalidatedEvent());
     }
 
     private function getSession(): SessionInterface

@@ -63,7 +63,7 @@ services:
     App\Application\Port\Api\SearchApiInterface: '@App\Infrastructure\Service\Api\Client\SearchApiClient'
     App\Application\Port\Api\CollectionApiInterface: '@App\Infrastructure\Service\Api\Client\CollectionApiClient'
 
-    App\Infrastructure\Http\Session\SessionCookieFactory:
+    App\Infrastructure\Security\EventListener\ClearSessionCookieListener:
         arguments:
             $sessionStorageOptions: '%session.storage.options%'
 
