@@ -14,7 +14,7 @@ final readonly class AccessTokenProvider
     }
 
     /**
-     * @return array<string, string>
+     * @return array
      */
     public function getAuthorizationHeaders(): array
     {

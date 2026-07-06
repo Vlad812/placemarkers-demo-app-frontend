@@ -8,7 +8,9 @@ use App\Application\DTO\Api\HttpApiResult;
 use App\Application\Port\Api\SearchApiInterface;
 use App\Infrastructure\Service\Api\AccessTokenProvider;
 use App\Infrastructure\Service\IncidentLogger;
+use Random\RandomException;
 use Symfony\Component\Serializer\SerializerInterface;
+use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 final readonly class SearchApiClient extends AbstractAuthenticatedHttpApiClient implements SearchApiInterface
@@ -23,8 +25,14 @@ final readonly class SearchApiClient extends AbstractAuthenticatedHttpApiClient 
     }
 
     /**
-     * @param list<string> $tags
-     * @param list<string> $types
+     * @param float $lat
+     * @param float $lon
+     * @param int $radiusMeters
+     * @param array $tags
+     * @param array $types
+     * @return HttpApiResult
+     * @throws RandomException
+     * @throws TransportExceptionInterface
      */
     public function search(
         float $lat,
@@ -55,6 +63,11 @@ final readonly class SearchApiClient extends AbstractAuthenticatedHttpApiClient 
         );
     }
 
+    /**
+     * @return HttpApiResult
+     * @throws RandomException
+     * @throws TransportExceptionInterface
+     */
     public function getUserTags(): HttpApiResult
     {
         return $this->executeRequest(
@@ -65,11 +78,17 @@ final readonly class SearchApiClient extends AbstractAuthenticatedHttpApiClient 
         );
     }
 
+    /**
+     * @return string
+     */
     protected function getServiceName(): string
     {
         return 'Search';
     }
 
+    /**
+     * @return string
+     */
     protected function getUnavailableMessage(): string
     {
         return 'Сервис поиска временно недоступен. Попробуйте позже.';

@@ -39,7 +39,10 @@ final readonly class PlacemarkerApiClient extends AbstractAuthenticatedHttpApiCl
     }
 
     /**
-     * @param array<string, mixed> $data
+     * @param array $data
+     * @return HttpApiResult
+     * @throws RandomException
+     * @throws TransportExceptionInterface
      */
     public function create(array $data): HttpApiResult
     {
@@ -52,7 +55,11 @@ final readonly class PlacemarkerApiClient extends AbstractAuthenticatedHttpApiCl
     }
 
     /**
-     * @param array<string, mixed> $data
+     * @param string $id
+     * @param array $data
+     * @return HttpApiResult
+     * @throws RandomException
+     * @throws TransportExceptionInterface
      */
     public function update(string $id, array $data): HttpApiResult
     {
@@ -64,6 +71,12 @@ final readonly class PlacemarkerApiClient extends AbstractAuthenticatedHttpApiCl
         );
     }
 
+    /**
+     * @param string $id
+     * @return HttpApiResult
+     * @throws RandomException
+     * @throws TransportExceptionInterface
+     */
     public function delete(string $id): HttpApiResult
     {
         return $this->executeRequest(
@@ -75,7 +88,10 @@ final readonly class PlacemarkerApiClient extends AbstractAuthenticatedHttpApiCl
     }
 
     /**
-     * @param array<string, mixed> $data
+     * @param array $data
+     * @return HttpApiResult
+     * @throws RandomException
+     * @throws TransportExceptionInterface
      */
     public function createTag(array $data): HttpApiResult
     {
@@ -87,11 +103,17 @@ final readonly class PlacemarkerApiClient extends AbstractAuthenticatedHttpApiCl
         );
     }
 
+    /**
+     * @return string
+     */
     protected function getServiceName(): string
     {
         return 'Placemarker';
     }
 
+    /**
+     * @return string
+     */
     protected function getUnavailableMessage(): string
     {
         return 'Сервис меток временно недоступен. Попробуйте позже.';

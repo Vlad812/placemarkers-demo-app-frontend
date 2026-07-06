@@ -14,6 +14,9 @@ use Random\RandomException;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Serializer\Encoder\JsonEncoder;
 use Symfony\Component\Serializer\SerializerInterface;
+use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;
+use Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface;
+use Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 use Symfony\Contracts\HttpClient\ResponseInterface;
@@ -33,8 +36,13 @@ abstract readonly class AbstractHttpApiClient
     abstract protected function getUnavailableMessage(): string;
 
     /**
-     * @param array<string, mixed> $options
-     * @throws TransportExceptionInterface|RandomException
+     * @param string $method
+     * @param string $path
+     * @param array $options
+     * @param string $clientErrorFallback
+     * @return HttpApiResult
+     * @throws RandomException
+     * @throws TransportExceptionInterface
      */
     protected function executeRequest(
         string $method,
@@ -96,7 +104,8 @@ abstract readonly class AbstractHttpApiClient
     }
 
     /**
-     * @return array<string, mixed>
+     * @param object $payload
+     * @return array
      */
     protected function serializePayload(object $payload): array
     {
@@ -107,7 +116,15 @@ abstract readonly class AbstractHttpApiClient
     }
 
     /**
-     * @return array<string, mixed>|list<mixed>
+     * @param ResponseInterface $response
+     * @param string $method
+     * @param string $path
+     * @return array
+     * @throws RandomException
+     * @throws TransportExceptionInterface
+     * @throws ClientExceptionInterface
+     * @throws RedirectionExceptionInterface
+     * @throws ServerExceptionInterface
      */
     private function decodeResponse(ResponseInterface $response, string $method, string $path): array
     {
@@ -133,7 +150,9 @@ abstract readonly class AbstractHttpApiClient
     }
 
     /**
-     * @param array<string, mixed>|list<mixed> $body
+     * @param array $body
+     * @param string $fallback
+     * @return string
      */
     private function resolveMessage(array $body, string $fallback): string
     {

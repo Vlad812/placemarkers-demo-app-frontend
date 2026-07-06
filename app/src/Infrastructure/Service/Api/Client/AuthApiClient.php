@@ -10,7 +10,9 @@ use App\Application\DTO\Api\HttpApiResult;
 use App\Application\Exception\ServiceUnavailableException;
 use App\Application\Port\Api\AuthApiInterface;
 use App\Infrastructure\Service\IncidentLogger;
+use Random\RandomException;
 use Symfony\Component\Serializer\SerializerInterface;
+use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 final readonly class AuthApiClient extends AbstractHttpApiClient implements AuthApiInterface
@@ -24,7 +26,10 @@ final readonly class AuthApiClient extends AbstractHttpApiClient implements Auth
     }
 
     /**
-     * @param array<string, mixed> $data
+     * @param array $data
+     * @return AuthTokenResponse
+     * @throws RandomException
+     * @throws TransportExceptionInterface
      */
     public function login(array $data): AuthTokenResponse
     {
@@ -34,7 +39,10 @@ final readonly class AuthApiClient extends AbstractHttpApiClient implements Auth
     }
 
     /**
-     * @param array<string, mixed> $data
+     * @param array $data
+     * @return AuthMessageResponse
+     * @throws RandomException
+     * @throws TransportExceptionInterface
      */
     public function signup(array $data): AuthMessageResponse
     {
@@ -44,7 +52,10 @@ final readonly class AuthApiClient extends AbstractHttpApiClient implements Auth
     }
 
     /**
-     * @param array<string, mixed> $data
+     * @param array $data
+     * @return AuthTokenResponse
+     * @throws RandomException
+     * @throws TransportExceptionInterface
      */
     public function refresh(array $data): AuthTokenResponse
     {
@@ -53,6 +64,13 @@ final readonly class AuthApiClient extends AbstractHttpApiClient implements Auth
         return AuthTokenResponse::fromArray($result->body);
     }
 
+    /**
+     * @param string $accessToken
+     * @param string|null $refreshToken
+     * @return HttpApiResult
+     * @throws RandomException
+     * @throws TransportExceptionInterface
+     */
     public function logout(string $accessToken, ?string $refreshToken = null): HttpApiResult
     {
         $options = [
@@ -68,6 +86,12 @@ final readonly class AuthApiClient extends AbstractHttpApiClient implements Auth
         return $this->request('POST', '/logout', $options);
     }
 
+    /**
+     * @param string $token
+     * @return AuthMessageResponse
+     * @throws RandomException
+     * @throws TransportExceptionInterface
+     */
     public function confirmEmail(string $token): AuthMessageResponse
     {
         $result = $this->request(
@@ -81,7 +105,10 @@ final readonly class AuthApiClient extends AbstractHttpApiClient implements Auth
     }
 
     /**
-     * @param array<string, mixed> $data
+     * @param array $data
+     * @return AuthMessageResponse
+     * @throws RandomException
+     * @throws TransportExceptionInterface
      */
     public function requestPasswordReset(array $data): AuthMessageResponse
     {
@@ -91,7 +118,10 @@ final readonly class AuthApiClient extends AbstractHttpApiClient implements Auth
     }
 
     /**
-     * @param array<string, mixed> $data
+     * @param array $data
+     * @return AuthMessageResponse
+     * @throws RandomException
+     * @throws TransportExceptionInterface
      */
     public function resetPassword(array $data): AuthMessageResponse
     {
@@ -100,18 +130,30 @@ final readonly class AuthApiClient extends AbstractHttpApiClient implements Auth
         return AuthMessageResponse::fromArray($result->body, 'Ссылка для сброса пароля недействительна или устарела.');
     }
 
+    /**
+     * @return string
+     */
     protected function getServiceName(): string
     {
         return 'Auth';
     }
 
+    /**
+     * @return string
+     */
     protected function getUnavailableMessage(): string
     {
         return ServiceUnavailableException::DEFAULT_MESSAGE;
     }
 
     /**
-     * @param array<string, mixed> $options
+     * @param string $method
+     * @param string $path
+     * @param array $options
+     * @param string $clientErrorFallback
+     * @return HttpApiResult
+     * @throws RandomException
+     * @throws TransportExceptionInterface
      */
     private function request(
         string $method,

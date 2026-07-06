@@ -21,9 +21,8 @@ abstract readonly class AbstractAuthenticatedHttpApiClient extends AbstractHttpA
     }
 
     /**
-     * @param array<string, mixed> $options
-     *
-     * @return array<string, mixed>
+     * @param array $options
+     * @return array
      */
     protected function withAuthHeaders(array $options = []): array
     {

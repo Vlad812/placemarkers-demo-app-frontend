@@ -8,7 +8,9 @@ use App\Application\DTO\Api\HttpApiResult;
 use App\Application\Port\Api\CollectionApiInterface;
 use App\Infrastructure\Service\Api\AccessTokenProvider;
 use App\Infrastructure\Service\IncidentLogger;
+use Random\RandomException;
 use Symfony\Component\Serializer\SerializerInterface;
+use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 final readonly class CollectionApiClient extends AbstractAuthenticatedHttpApiClient implements CollectionApiInterface
@@ -22,6 +24,11 @@ final readonly class CollectionApiClient extends AbstractAuthenticatedHttpApiCli
         parent::__construct($collectionClient, $incidentLogger, $serializer, $accessTokenProvider);
     }
 
+    /**
+     * @return HttpApiResult
+     * @throws RandomException
+     * @throws TransportExceptionInterface
+     */
     public function getAll(): HttpApiResult
     {
         return $this->executeRequest(
@@ -33,7 +40,10 @@ final readonly class CollectionApiClient extends AbstractAuthenticatedHttpApiCli
     }
 
     /**
-     * @param array<string, mixed> $data
+     * @param array $data
+     * @return HttpApiResult
+     * @throws RandomException
+     * @throws TransportExceptionInterface
      */
     public function create(array $data): HttpApiResult
     {
@@ -45,6 +55,12 @@ final readonly class CollectionApiClient extends AbstractAuthenticatedHttpApiCli
         );
     }
 
+    /**
+     * @param string $id
+     * @return HttpApiResult
+     * @throws RandomException
+     * @throws TransportExceptionInterface
+     */
     public function delete(string $id): HttpApiResult
     {
         return $this->executeRequest(
@@ -55,11 +71,17 @@ final readonly class CollectionApiClient extends AbstractAuthenticatedHttpApiCli
         );
     }
 
+    /**
+     * @return string
+     */
     protected function getServiceName(): string
     {
         return 'Collection';
     }
 
+    /**
+     * @return string
+     */
     protected function getUnavailableMessage(): string
     {
         return 'Сервис коллекций временно недоступен. Попробуйте позже.';
