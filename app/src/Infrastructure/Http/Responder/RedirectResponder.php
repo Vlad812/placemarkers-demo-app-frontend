@@ -8,6 +8,7 @@ use App\Application\DTO\CookieData;
 use App\Application\DTO\ErrorResponse;
 use App\Application\DTO\RedirectPageResponse;
 use App\Application\DTO\ResponsePayloadInterface;
+use InvalidArgumentException;
 use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -24,7 +25,7 @@ final readonly class RedirectResponder implements ResponderInterface
     public function respond(ResponsePayloadInterface $payload): RedirectResponse
     {
         if (!$payload instanceof RedirectPageResponse) {
-            throw new \InvalidArgumentException(sprintf('Expected RedirectPageResponse, got [%s].', $payload::class));
+            throw new InvalidArgumentException(sprintf('Expected RedirectPageResponse, got [%s].', $payload::class));
         }
 
         $response = new RedirectResponse(
@@ -34,10 +35,6 @@ final readonly class RedirectResponder implements ResponderInterface
 
         foreach ($payload->cookies as $cookie) {
             $response->headers->setCookie($this->buildCookie($cookie));
-        }
-
-        foreach ($payload->clearCookies as $cookieName) {
-            $response->headers->clearCookie($cookieName);
         }
 
         return $response;
