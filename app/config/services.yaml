@@ -61,5 +61,9 @@ services:
     App\Application\Port\Api\SearchApiInterface: '@App\Infrastructure\Service\Api\Client\SearchApiClient'
     App\Application\Port\Api\CollectionApiInterface: '@App\Infrastructure\Service\Api\Client\CollectionApiClient'
 
+    App\Infrastructure\Http\Session\SessionCookieFactory:
+        arguments:
+            $sessionStorageOptions: '%session.storage.options%'
+
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
