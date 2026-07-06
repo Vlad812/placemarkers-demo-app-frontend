@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Service\Api;
 
-use App\Infrastructure\Security\AuthSessionStorage;
+use App\Infrastructure\Security\AuthSessionStorageInterface;
 
 final readonly class AccessTokenProvider
 {
     public function __construct(
-        private AuthSessionStorage $authSessionStorage,
+        private AuthSessionStorageInterface $authSessionStorage,
     ) {
     }
 

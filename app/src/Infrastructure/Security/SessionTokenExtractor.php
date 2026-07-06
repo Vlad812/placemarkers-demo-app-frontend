@@ -9,14 +9,19 @@ use Symfony\Component\HttpFoundation\Request;
 
 final readonly class SessionTokenExtractor implements TokenExtractorInterface
 {
+    public function __construct(
+        private AuthSessionStorageInterface $authSessionStorage,
+    ) {
+    }
+
     public function extract(Request $request): false|string
     {
         if (!$request->hasSession()) {
             return false;
         }
 
-        $token = $request->getSession()->get(AuthSessionKeys::ACCESS_TOKEN);
+        $token = $this->authSessionStorage->getAccessToken();
 
-        return is_string($token) && $token !== '' ? $token : false;
+        return $token ?? false;
     }
 }

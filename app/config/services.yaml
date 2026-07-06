@@ -56,6 +56,8 @@ services:
         arguments:
             $collectionClient: '@collection.client'
 
+    App\Infrastructure\Security\AuthSessionStorageInterface: '@App\Infrastructure\Security\AuthSessionStorage'
+
     App\Application\Port\Api\AuthApiInterface: '@App\Infrastructure\Service\Api\Client\AuthApiClient'
     App\Application\Port\Api\PlacemarkerApiInterface: '@App\Infrastructure\Service\Api\Client\PlacemarkerApiClient'
     App\Application\Port\Api\SearchApiInterface: '@App\Infrastructure\Service\Api\Client\SearchApiClient'
