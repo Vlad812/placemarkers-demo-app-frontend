@@ -5,25 +5,19 @@ declare(strict_types=1);
 namespace App\Application\Port\Api;
 
 use App\Application\DTO\Api\HttpApiResult;
+use App\Application\DTO\Api\Payload\PlacemarkerCreatePayload;
+use App\Application\DTO\Api\Payload\PlacemarkerUpdatePayload;
+use App\Application\DTO\Api\Payload\TagCreatePayload;
 
 interface PlacemarkerApiInterface
 {
     public function getAll(): HttpApiResult;
 
-    /**
-     * @param array<string, mixed> $data
-     */
-    public function create(array $data): HttpApiResult;
+    public function create(PlacemarkerCreatePayload $payload): HttpApiResult;
 
-    /**
-     * @param array<string, mixed> $data
-     */
-    public function update(string $id, array $data): HttpApiResult;
+    public function update(string $id, PlacemarkerUpdatePayload $payload): HttpApiResult;
 
     public function delete(string $id): HttpApiResult;
 
-    /**
-     * @param array<string, mixed> $data
-     */
-    public function createTag(array $data): HttpApiResult;
+    public function createTag(TagCreatePayload $payload): HttpApiResult;
 }

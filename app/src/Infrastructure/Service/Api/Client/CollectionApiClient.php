@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Infrastructure\Service\Api\Client;
 
 use App\Application\DTO\Api\HttpApiResult;
+use App\Application\DTO\Api\Payload\CollectionCreatePayload;
 use App\Application\Port\Api\CollectionApiInterface;
 use App\Infrastructure\Service\Api\AccessTokenProvider;
 use App\Infrastructure\Service\IncidentLogger;
@@ -40,17 +41,17 @@ final readonly class CollectionApiClient extends AbstractAuthenticatedHttpApiCli
     }
 
     /**
-     * @param array $data
+     * @param CollectionCreatePayload $payload
      * @return HttpApiResult
      * @throws RandomException
      * @throws TransportExceptionInterface
      */
-    public function create(array $data): HttpApiResult
+    public function create(CollectionCreatePayload $payload): HttpApiResult
     {
         return $this->executeRequest(
             'POST',
             '/collections',
-            $this->withAuthHeaders(['json' => $data]),
+            $this->withAuthHeaders(['json' => $payload->toArray()]),
             'Не удалось сохранить коллекцию.',
         );
     }

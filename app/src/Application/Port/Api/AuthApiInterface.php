@@ -7,35 +7,25 @@ namespace App\Application\Port\Api;
 use App\Application\DTO\Api\Auth\AuthMessageResponse;
 use App\Application\DTO\Api\Auth\AuthTokenResponse;
 use App\Application\DTO\Api\HttpApiResult;
+use App\Application\DTO\Api\Payload\AuthLoginPayload;
+use App\Application\DTO\Api\Payload\AuthRefreshPayload;
+use App\Application\DTO\Api\Payload\AuthRequestPasswordResetPayload;
+use App\Application\DTO\Api\Payload\AuthResetPasswordPayload;
+use App\Application\DTO\Api\Payload\AuthSignupPayload;
 
 interface AuthApiInterface
 {
-    /**
-     * @param array<string, mixed> $data
-     */
-    public function login(array $data): AuthTokenResponse;
+    public function login(AuthLoginPayload $payload): AuthTokenResponse;
 
-    /**
-     * @param array<string, mixed> $data
-     */
-    public function signup(array $data): AuthMessageResponse;
+    public function signup(AuthSignupPayload $payload): AuthMessageResponse;
 
-    /**
-     * @param array<string, mixed> $data
-     */
-    public function refresh(array $data): AuthTokenResponse;
+    public function refresh(AuthRefreshPayload $payload): AuthTokenResponse;
 
     public function logout(string $accessToken, ?string $refreshToken = null): HttpApiResult;
 
     public function confirmEmail(string $token): AuthMessageResponse;
 
-    /**
-     * @param array<string, mixed> $data
-     */
-    public function requestPasswordReset(array $data): AuthMessageResponse;
+    public function requestPasswordReset(AuthRequestPasswordResetPayload $payload): AuthMessageResponse;
 
-    /**
-     * @param array<string, mixed> $data
-     */
-    public function resetPassword(array $data): AuthMessageResponse;
+    public function resetPassword(AuthResetPasswordPayload $payload): AuthMessageResponse;
 }

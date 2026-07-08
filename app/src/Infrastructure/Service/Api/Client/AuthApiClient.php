@@ -7,6 +7,11 @@ namespace App\Infrastructure\Service\Api\Client;
 use App\Application\DTO\Api\Auth\AuthMessageResponse;
 use App\Application\DTO\Api\Auth\AuthTokenResponse;
 use App\Application\DTO\Api\HttpApiResult;
+use App\Application\DTO\Api\Payload\AuthLoginPayload;
+use App\Application\DTO\Api\Payload\AuthRefreshPayload;
+use App\Application\DTO\Api\Payload\AuthRequestPasswordResetPayload;
+use App\Application\DTO\Api\Payload\AuthResetPasswordPayload;
+use App\Application\DTO\Api\Payload\AuthSignupPayload;
 use App\Application\Exception\ServiceUnavailableException;
 use App\Application\Port\Api\AuthApiInterface;
 use App\Infrastructure\Service\IncidentLogger;
@@ -26,40 +31,40 @@ final readonly class AuthApiClient extends AbstractHttpApiClient implements Auth
     }
 
     /**
-     * @param array $data
+     * @param AuthLoginPayload $payload
      * @return AuthTokenResponse
      * @throws RandomException
      * @throws TransportExceptionInterface
      */
-    public function login(array $data): AuthTokenResponse
+    public function login(AuthLoginPayload $payload): AuthTokenResponse
     {
-        $result = $this->request('POST', '/login', ['json' => $data], 'Неверный email или пароль.');
+        $result = $this->request('POST', '/login', ['json' => $payload->toArray()], 'Неверный email или пароль.');
 
         return AuthTokenResponse::fromArray($result->body);
     }
 
     /**
-     * @param array $data
+     * @param AuthSignupPayload $payload
      * @return AuthMessageResponse
      * @throws RandomException
      * @throws TransportExceptionInterface
      */
-    public function signup(array $data): AuthMessageResponse
+    public function signup(AuthSignupPayload $payload): AuthMessageResponse
     {
-        $result = $this->request('POST', '/signup', ['json' => $data], 'Ошибка при регистрации.');
+        $result = $this->request('POST', '/signup', ['json' => $payload->toArray()], 'Ошибка при регистрации.');
 
         return AuthMessageResponse::fromArray($result->body, 'Ошибка при регистрации.');
     }
 
     /**
-     * @param array $data
+     * @param AuthRefreshPayload $payload
      * @return AuthTokenResponse
      * @throws RandomException
      * @throws TransportExceptionInterface
      */
-    public function refresh(array $data): AuthTokenResponse
+    public function refresh(AuthRefreshPayload $payload): AuthTokenResponse
     {
-        $result = $this->request('POST', '/refresh', ['json' => $data]);
+        $result = $this->request('POST', '/refresh', ['json' => $payload->toArray()]);
 
         return AuthTokenResponse::fromArray($result->body);
     }
@@ -105,27 +110,27 @@ final readonly class AuthApiClient extends AbstractHttpApiClient implements Auth
     }
 
     /**
-     * @param array $data
+     * @param AuthRequestPasswordResetPayload $payload
      * @return AuthMessageResponse
      * @throws RandomException
      * @throws TransportExceptionInterface
      */
-    public function requestPasswordReset(array $data): AuthMessageResponse
+    public function requestPasswordReset(AuthRequestPasswordResetPayload $payload): AuthMessageResponse
     {
-        $result = $this->request('POST', '/forgot-password', ['json' => $data], 'Не удалось отправить запрос на сброс пароля.');
+        $result = $this->request('POST', '/forgot-password', ['json' => $payload->toArray()], 'Не удалось отправить запрос на сброс пароля.');
 
         return AuthMessageResponse::fromArray($result->body, 'Не удалось отправить запрос на сброс пароля.');
     }
 
     /**
-     * @param array $data
+     * @param AuthResetPasswordPayload $payload
      * @return AuthMessageResponse
      * @throws RandomException
      * @throws TransportExceptionInterface
      */
-    public function resetPassword(array $data): AuthMessageResponse
+    public function resetPassword(AuthResetPasswordPayload $payload): AuthMessageResponse
     {
-        $result = $this->request('POST', '/reset-password', ['json' => $data], 'Ссылка для сброса пароля недействительна или устарела.');
+        $result = $this->request('POST', '/reset-password', ['json' => $payload->toArray()], 'Ссылка для сброса пароля недействительна или устарела.');
 
         return AuthMessageResponse::fromArray($result->body, 'Ссылка для сброса пароля недействительна или устарела.');
     }

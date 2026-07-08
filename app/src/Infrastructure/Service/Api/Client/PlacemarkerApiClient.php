@@ -5,6 +5,9 @@ declare(strict_types=1);
 namespace App\Infrastructure\Service\Api\Client;
 
 use App\Application\DTO\Api\HttpApiResult;
+use App\Application\DTO\Api\Payload\PlacemarkerCreatePayload;
+use App\Application\DTO\Api\Payload\PlacemarkerUpdatePayload;
+use App\Application\DTO\Api\Payload\TagCreatePayload;
 use App\Application\Port\Api\PlacemarkerApiInterface;
 use App\Infrastructure\Service\Api\AccessTokenProvider;
 use App\Infrastructure\Service\IncidentLogger;
@@ -39,34 +42,34 @@ final readonly class PlacemarkerApiClient extends AbstractAuthenticatedHttpApiCl
     }
 
     /**
-     * @param array $data
+     * @param PlacemarkerCreatePayload $payload
      * @return HttpApiResult
      * @throws RandomException
      * @throws TransportExceptionInterface
      */
-    public function create(array $data): HttpApiResult
+    public function create(PlacemarkerCreatePayload $payload): HttpApiResult
     {
         return $this->executeRequest(
             'POST',
             '/api/placemarkers',
-            $this->withAuthHeaders(['json' => $data]),
+            $this->withAuthHeaders(['json' => $payload->toArray()]),
             'Не удалось создать метку.',
         );
     }
 
     /**
      * @param string $id
-     * @param array $data
+     * @param PlacemarkerUpdatePayload $payload
      * @return HttpApiResult
      * @throws RandomException
      * @throws TransportExceptionInterface
      */
-    public function update(string $id, array $data): HttpApiResult
+    public function update(string $id, PlacemarkerUpdatePayload $payload): HttpApiResult
     {
         return $this->executeRequest(
             'PUT',
             '/api/placemarkers/' . rawurlencode($id),
-            $this->withAuthHeaders(['json' => $data]),
+            $this->withAuthHeaders(['json' => $payload->toArray()]),
             'Не удалось обновить метку.',
         );
     }
@@ -88,17 +91,17 @@ final readonly class PlacemarkerApiClient extends AbstractAuthenticatedHttpApiCl
     }
 
     /**
-     * @param array $data
+     * @param TagCreatePayload $payload
      * @return HttpApiResult
      * @throws RandomException
      * @throws TransportExceptionInterface
      */
-    public function createTag(array $data): HttpApiResult
+    public function createTag(TagCreatePayload $payload): HttpApiResult
     {
         return $this->executeRequest(
             'POST',
             '/api/tags',
-            $this->withAuthHeaders(['json' => $data]),
+            $this->withAuthHeaders(['json' => $payload->toArray()]),
             'Не удалось создать тег.',
         );
     }

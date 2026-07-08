@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Security;
 
+use App\Application\DTO\Api\Payload\AuthRefreshPayload;
 use App\Application\Exception\ApiException;
 use App\Application\Exception\ServiceUnavailableException;
 use App\Application\Exception\UnauthorizedException;
@@ -58,9 +59,7 @@ final readonly class RefreshTokenListener
         }
 
         try {
-            $result = $this->apiClient->refresh([
-                'refresh_token' => $refreshToken,
-            ]);
+            $result = $this->apiClient->refresh(new AuthRefreshPayload($refreshToken));
 
             $this->authSessionStorage->store(
                 $result->accessToken,
