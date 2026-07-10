@@ -8,7 +8,7 @@ use Psr\Log\LoggerInterface;
 use Symfony\Component\Uid\Uuid;
 use Throwable;
 
-final readonly class IncidentLogger
+final readonly class IncidentLogger implements IncidentLoggerInterface
 {
     public function __construct(
         private LoggerInterface $logger,

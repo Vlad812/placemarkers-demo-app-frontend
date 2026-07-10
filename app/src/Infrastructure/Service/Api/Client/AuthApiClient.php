@@ -14,7 +14,7 @@ use App\Application\DTO\Api\Payload\AuthResetPasswordPayload;
 use App\Application\DTO\Api\Payload\AuthSignupPayload;
 use App\Application\Exception\ServiceUnavailableException;
 use App\Application\Port\Api\AuthApiInterface;
-use App\Infrastructure\Service\IncidentLogger;
+use App\Infrastructure\Service\IncidentLoggerInterface;
 use Random\RandomException;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
@@ -24,7 +24,7 @@ final readonly class AuthApiClient extends AbstractHttpApiClient implements Auth
 {
     public function __construct(
         HttpClientInterface $authClient,
-        IncidentLogger $incidentLogger,
+        IncidentLoggerInterface $incidentLogger,
         SerializerInterface $serializer,
     ) {
         parent::__construct($authClient, $incidentLogger, $serializer);

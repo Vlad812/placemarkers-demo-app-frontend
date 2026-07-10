@@ -7,7 +7,7 @@ namespace App\Infrastructure\EventSubscriber;
 use App\Application\DTO\ErrorResponse;
 use App\Application\Exception\ClientExceptionInterface;
 use App\Infrastructure\Http\Responder\JsonResponder;
-use App\Infrastructure\Service\IncidentLogger;
+use App\Infrastructure\Service\IncidentLoggerInterface;
 use Random\RandomException;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -19,7 +19,7 @@ use Symfony\Component\HttpKernel\KernelEvents;
 final readonly class ExceptionSubscriber implements EventSubscriberInterface
 {
     public function __construct(
-        private IncidentLogger $incidentLogger,
+        private IncidentLoggerInterface $incidentLogger,
         private JsonResponder $jsonResponder,
     ) {
     }

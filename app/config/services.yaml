@@ -57,6 +57,7 @@ services:
             $collectionClient: '@collection.client'
 
     App\Infrastructure\Security\AuthSessionStorageInterface: '@App\Infrastructure\Security\AuthSessionStorage'
+    App\Infrastructure\Service\IncidentLoggerInterface: '@App\Infrastructure\Service\IncidentLogger'
 
     App\Application\Port\Api\AuthApiInterface: '@App\Infrastructure\Service\Api\Client\AuthApiClient'
     App\Application\Port\Api\PlacemarkerApiInterface: '@App\Infrastructure\Service\Api\Client\PlacemarkerApiClient'

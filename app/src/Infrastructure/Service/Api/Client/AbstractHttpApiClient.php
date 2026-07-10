@@ -8,7 +8,7 @@ use App\Application\DTO\Api\HttpApiResult;
 use App\Application\Exception\ApiException;
 use App\Application\Exception\ServiceUnavailableException;
 use App\Application\Exception\UnauthorizedException;
-use App\Infrastructure\Service\IncidentLogger;
+use App\Infrastructure\Service\IncidentLoggerInterface;
 use JsonException;
 use Random\RandomException;
 use Symfony\Component\HttpFoundation\Response;
@@ -26,7 +26,7 @@ abstract readonly class AbstractHttpApiClient
 {
     public function __construct(
         protected HttpClientInterface $httpClient,
-        protected IncidentLogger $incidentLogger,
+        protected IncidentLoggerInterface $incidentLogger,
         protected SerializerInterface $serializer,
     ) {
     }
