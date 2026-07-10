@@ -1,0 +1,4 @@
+# Dev: Symfony пересобирает контейнер/роуты при изменении файлов (в паре с RR pool.debug)
+framework:
+    router:
+        strict_requirements: true
