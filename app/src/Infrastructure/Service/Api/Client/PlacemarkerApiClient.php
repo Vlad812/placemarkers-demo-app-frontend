@@ -10,7 +10,7 @@ use App\Application\DTO\Api\Payload\PlacemarkerUpdatePayload;
 use App\Application\DTO\Api\Payload\TagCreatePayload;
 use App\Application\Port\Api\PlacemarkerApiInterface;
 use App\Infrastructure\Service\Api\AccessTokenProvider;
-use App\Infrastructure\Service\IncidentLogger;
+use App\Infrastructure\Service\IncidentLoggerInterface;
 use Random\RandomException;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
@@ -20,7 +20,7 @@ final readonly class PlacemarkerApiClient extends AbstractAuthenticatedHttpApiCl
 {
     public function __construct(
         HttpClientInterface $databaseClient,
-        IncidentLogger $incidentLogger,
+        IncidentLoggerInterface $incidentLogger,
         SerializerInterface $serializer,
         AccessTokenProvider $accessTokenProvider,
     ) {

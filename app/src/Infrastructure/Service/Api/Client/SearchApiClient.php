@@ -7,7 +7,7 @@ namespace App\Infrastructure\Service\Api\Client;
 use App\Application\DTO\Api\HttpApiResult;
 use App\Application\Port\Api\SearchApiInterface;
 use App\Infrastructure\Service\Api\AccessTokenProvider;
-use App\Infrastructure\Service\IncidentLogger;
+use App\Infrastructure\Service\IncidentLoggerInterface;
 use Random\RandomException;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
@@ -17,7 +17,7 @@ final readonly class SearchApiClient extends AbstractAuthenticatedHttpApiClient 
 {
     public function __construct(
         HttpClientInterface $searchClient,
-        IncidentLogger $incidentLogger,
+        IncidentLoggerInterface $incidentLogger,
         SerializerInterface $serializer,
         AccessTokenProvider $accessTokenProvider,
     ) {
