@@ -21,4 +21,6 @@ interface SearchApiInterface
     ): HttpApiResult;
 
     public function getUserTags(): HttpApiResult;
+
+    public function getPlacemarkerTypes(): HttpApiResult;
 }

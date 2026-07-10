@@ -5,6 +5,10 @@
 {% block content %}
     <h1 class="h3 mb-4">Добавление метки</h1>
 
+    {% if error is defined and error %}
+        <div class="alert alert-danger" role="alert">{{ error }}</div>
+    {% endif %}
+
     <section class="placemark-section placemark-section--map mb-4">
         <div
             id="placemark-map"
@@ -13,7 +17,7 @@
             data-center-lon="{{ mapCenterLon }}"
             data-api-url="{{ path('api_placemarker_create') }}"
             data-api-base="{{ path('api_placemarker_create') }}"
-            data-initial-placemarkers="{{ savedPlacemarkers|json_encode|e('html_attr') }}"
+            data-initial-placemarkers="{{ (savedPlacemarkers|default([]))|json_encode|e('html_attr') }}"
         ></div>
     </section>
 
@@ -40,14 +44,9 @@
                     <div class="col-md-6">
                         <label class="form-label">Тип метки</label>
                         <select class="form-select placemark-type">
-                            <option value="default">default</option>
-                            <option value="residential">жилая недвижимость</option>
-                            <option value="commercial">коммерчерская недвижимость</option>
-                            <option value="parking">парковка</option>
-                            <option value="cafe">кафе</option>
-                            <option value="restaurant">ресторан</option>
-                            <option value="museum">музей</option>
-                            <option value="marketplace">Пункт выдачи marketplace</option>
+                            {% for type in placemarkerTypes|default([]) %}
+                                <option value="{{ type.slug }}">{{ type.name }}</option>
+                            {% endfor %}
                         </select>
                     </div>
                     <div class="col-md-6 d-flex flex-column justify-content-end">
@@ -114,14 +113,9 @@
                         <div class="mb-3">
                             <label for="placemark-edit-type" class="form-label">Тип метки</label>
                             <select class="form-select" id="placemark-edit-type">
-                                <option value="default">default</option>
-                                <option value="residential">жилая недвижимость</option>
-                                <option value="commercial">коммерчерская недвижимость</option>
-                                <option value="parking">парковка</option>
-                                <option value="cafe">кафе</option>
-                                <option value="restaurant">ресторан</option>
-                                <option value="museum">музей</option>
-                                <option value="marketplace">Пункт выдачи marketplace</option>
+                                {% for type in placemarkerTypes|default([]) %}
+                                    <option value="{{ type.slug }}">{{ type.name }}</option>
+                                {% endfor %}
                             </select>
                         </div>
                         <div class="placemark-edit-coords mb-3">
@@ -162,10 +156,10 @@
                 </div>
                 <div class="modal-body">
                     <div class="placemark-tags-list d-flex flex-wrap gap-2" id="available-tags-container">
-                        {% if userTags is empty %}
+                        {% if userTags|default([]) is empty %}
                             <p class="text-muted w-100 text-center mb-0">У вас пока нет тегов. Создайте их в разделе "Мои теги".</p>
                         {% else %}
-                            {% for tag in userTags %}
+                            {% for tag in userTags|default([]) %}
                                 <div>
                                     <input type="checkbox" class="btn-check tag-checkbox" id="tag_{{ tag.id }}" value="{{ tag.id }}" data-name="{{ tag.name|e('html_attr') }}" autocomplete="off">
                                     <label class="btn btn-outline-primary rounded-pill px-3 py-1" for="tag_{{ tag.id }}">{{ tag.name }}</label>

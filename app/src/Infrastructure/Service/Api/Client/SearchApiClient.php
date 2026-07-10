@@ -79,6 +79,21 @@ final readonly class SearchApiClient extends AbstractAuthenticatedHttpApiClient 
     }
 
     /**
+     * @return HttpApiResult
+     * @throws RandomException
+     * @throws TransportExceptionInterface
+     */
+    public function getPlacemarkerTypes(): HttpApiResult
+    {
+        return $this->executeRequest(
+            'GET',
+            '/search/types',
+            $this->withAuthHeaders(),
+            'Не удалось загрузить типы меток.',
+        );
+    }
+
+    /**
      * @return string
      */
     protected function getServiceName(): string
