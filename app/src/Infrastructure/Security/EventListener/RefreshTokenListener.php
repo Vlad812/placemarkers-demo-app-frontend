@@ -2,14 +2,15 @@
 
 declare(strict_types=1);
 
-namespace App\Infrastructure\Security;
+namespace App\Infrastructure\Security\EventListener;
 
 use App\Application\DTO\Api\Payload\AuthRefreshPayload;
 use App\Application\Exception\ApiException;
 use App\Application\Exception\ServiceUnavailableException;
 use App\Application\Exception\UnauthorizedException;
 use App\Application\Port\Api\AuthApiInterface;
-use App\Infrastructure\Service\IncidentLogger;
+use App\Infrastructure\Security\AuthSessionStorageInterface;
+use App\Infrastructure\Service\IncidentLoggerInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Encoder\JWTEncoderInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Exception\JWTDecodeFailureException;
 use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
@@ -22,7 +23,7 @@ final readonly class RefreshTokenListener
         private AuthApiInterface            $apiClient,
         private AuthSessionStorageInterface $authSessionStorage,
         private JWTEncoderInterface         $jwtEncoder,
-        private IncidentLogger              $incidentLogger,
+        private IncidentLoggerInterface     $incidentLogger,
     ) {
     }
 
