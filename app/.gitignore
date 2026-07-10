@@ -12,5 +12,6 @@
 ###> lexik/jwt-authentication-bundle ###
 /config/jwt/*.pem
 ###< lexik/jwt-authentication-bundle ###
-/public/assets/
 /node_modules/
+/public/assets/bootstrap/
+/public/assets/jquery/
