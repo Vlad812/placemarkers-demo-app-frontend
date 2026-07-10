@@ -6,7 +6,7 @@ namespace App\Infrastructure\Service\Api\Client;
 
 use App\Application\DTO\Api\HttpApiResult;
 use App\Application\Port\Api\SearchApiInterface;
-use App\Infrastructure\Service\Api\AccessTokenProvider;
+use App\Infrastructure\Service\Api\AccessTokenProviderInterface;
 use App\Infrastructure\Service\IncidentLoggerInterface;
 use Random\RandomException;
 use Symfony\Component\Serializer\SerializerInterface;
@@ -19,7 +19,7 @@ final readonly class SearchApiClient extends AbstractAuthenticatedHttpApiClient 
         HttpClientInterface $searchClient,
         IncidentLoggerInterface $incidentLogger,
         SerializerInterface $serializer,
-        AccessTokenProvider $accessTokenProvider,
+        AccessTokenProviderInterface $accessTokenProvider,
     ) {
         parent::__construct($searchClient, $incidentLogger, $serializer, $accessTokenProvider);
     }

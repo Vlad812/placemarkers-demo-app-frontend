@@ -58,6 +58,7 @@ services:
 
     App\Infrastructure\Security\AuthSessionStorageInterface: '@App\Infrastructure\Security\AuthSessionStorage'
     App\Infrastructure\Service\IncidentLoggerInterface: '@App\Infrastructure\Service\IncidentLogger'
+    App\Infrastructure\Service\Api\AccessTokenProviderInterface: '@App\Infrastructure\Service\Api\AccessTokenProvider'
 
     App\Application\Port\Api\AuthApiInterface: '@App\Infrastructure\Service\Api\Client\AuthApiClient'
     App\Application\Port\Api\PlacemarkerApiInterface: '@App\Infrastructure\Service\Api\Client\PlacemarkerApiClient'

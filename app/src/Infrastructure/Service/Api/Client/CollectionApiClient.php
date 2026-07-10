@@ -7,7 +7,7 @@ namespace App\Infrastructure\Service\Api\Client;
 use App\Application\DTO\Api\HttpApiResult;
 use App\Application\DTO\Api\Payload\CollectionCreatePayload;
 use App\Application\Port\Api\CollectionApiInterface;
-use App\Infrastructure\Service\Api\AccessTokenProvider;
+use App\Infrastructure\Service\Api\AccessTokenProviderInterface;
 use App\Infrastructure\Service\IncidentLoggerInterface;
 use Random\RandomException;
 use Symfony\Component\Serializer\SerializerInterface;
@@ -20,7 +20,7 @@ final readonly class CollectionApiClient extends AbstractAuthenticatedHttpApiCli
         HttpClientInterface $collectionClient,
         IncidentLoggerInterface $incidentLogger,
         SerializerInterface $serializer,
-        AccessTokenProvider $accessTokenProvider,
+        AccessTokenProviderInterface $accessTokenProvider,
     ) {
         parent::__construct($collectionClient, $incidentLogger, $serializer, $accessTokenProvider);
     }

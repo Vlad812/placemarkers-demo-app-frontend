@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Service\Api\Client;
 
-use App\Infrastructure\Service\Api\AccessTokenProvider;
+use App\Infrastructure\Service\Api\AccessTokenProviderInterface;
 use App\Infrastructure\Service\IncidentLoggerInterface;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
@@ -15,7 +15,7 @@ abstract readonly class AbstractAuthenticatedHttpApiClient extends AbstractHttpA
         HttpClientInterface $httpClient,
         IncidentLoggerInterface $incidentLogger,
         SerializerInterface $serializer,
-        protected AccessTokenProvider $accessTokenProvider,
+        protected AccessTokenProviderInterface $accessTokenProvider,
     ) {
         parent::__construct($httpClient, $incidentLogger, $serializer);
     }
