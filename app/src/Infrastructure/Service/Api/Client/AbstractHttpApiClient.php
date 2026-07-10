@@ -10,7 +10,6 @@ use App\Application\Exception\ServiceUnavailableException;
 use App\Application\Exception\UnauthorizedException;
 use App\Infrastructure\Service\IncidentLoggerInterface;
 use JsonException;
-use Random\RandomException;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Serializer\Encoder\JsonEncoder;
 use Symfony\Component\Serializer\SerializerInterface;
@@ -41,7 +40,6 @@ abstract readonly class AbstractHttpApiClient
      * @param array $options
      * @param string $clientErrorFallback
      * @return HttpApiResult
-     * @throws RandomException
      * @throws TransportExceptionInterface
      */
     protected function executeRequest(
@@ -73,7 +71,6 @@ abstract readonly class AbstractHttpApiClient
         }
 
         $statusCode = $response->getStatusCode();
-        $body = $this->decodeResponse($response, $method, $path);
 
         if ($statusCode >= Response::HTTP_INTERNAL_SERVER_ERROR) {
             $this->incidentLogger->logWarningMessage(
@@ -89,7 +86,25 @@ abstract readonly class AbstractHttpApiClient
             throw new ServiceUnavailableException($this->getUnavailableMessage());
         }
 
+        $body = $this->decodeResponse($response, $method, $path, $statusCode);
+
         if ($statusCode >= Response::HTTP_BAD_REQUEST) {
+            $headers = $response->getHeaders(false);
+            $contentType = $headers['content-type'][0] ?? '';
+
+            if ($statusCode === Response::HTTP_NOT_FOUND && !str_contains($contentType, 'application/json')) {
+                $this->incidentLogger->logWarningMessage(
+                    sprintf(
+                        '%s service is unreachable (404 Not Found from proxy) for [%s %s].',
+                        $this->getServiceName(),
+                        $method,
+                        $path,
+                    ),
+                );
+
+                throw new ServiceUnavailableException($this->getUnavailableMessage());
+            }
+
             if ($statusCode === Response::HTTP_UNAUTHORIZED) {
                 throw new UnauthorizedException($clientErrorFallback);
             }
@@ -119,14 +134,14 @@ abstract readonly class AbstractHttpApiClient
      * @param ResponseInterface $response
      * @param string $method
      * @param string $path
+     * @param int $statusCode
      * @return array
-     * @throws RandomException
      * @throws TransportExceptionInterface
      * @throws ClientExceptionInterface
      * @throws RedirectionExceptionInterface
      * @throws ServerExceptionInterface
      */
-    private function decodeResponse(ResponseInterface $response, string $method, string $path): array
+    private function decodeResponse(ResponseInterface $response, string $method, string $path, int $statusCode): array
     {
         $content = $response->getContent(false);
 
@@ -140,6 +155,10 @@ abstract readonly class AbstractHttpApiClient
 
             return $decoded;
         } catch (JsonException $e) {
+            if ($statusCode >= Response::HTTP_BAD_REQUEST) {
+                return [];
+            }
+
             $this->incidentLogger->logWarning(
                 sprintf('%s service returned invalid JSON for [%s %s].', $this->getServiceName(), $method, $path),
                 $e,
