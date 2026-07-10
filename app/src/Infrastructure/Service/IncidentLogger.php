@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Infrastructure\Service;
 
 use Psr\Log\LoggerInterface;
-use Random\RandomException;
+use Symfony\Component\Uid\Uuid;
 use Throwable;
 
 final readonly class IncidentLogger
@@ -17,7 +17,6 @@ final readonly class IncidentLogger
 
     /**
      * @param array<string, mixed> $context
-     * @throws RandomException
      */
     public function logWarning(string $message, Throwable $exception, array $context = []): string
     {
@@ -26,7 +25,6 @@ final readonly class IncidentLogger
 
     /**
      * @param array<string, mixed> $context
-     * @throws RandomException
      */
     public function logWarningMessage(string $message, array $context = []): string
     {
@@ -35,7 +33,6 @@ final readonly class IncidentLogger
 
     /**
      * @param array<string, mixed> $context
-     * @throws RandomException
      */
     public function logError(string $message, Throwable $exception, array $context = []): string
     {
@@ -44,7 +41,6 @@ final readonly class IncidentLogger
 
     /**
      * @param array<string, mixed> $context
-     * @throws RandomException
      */
     public function logErrorMessage(string $message, array $context = []): string
     {
@@ -58,11 +54,10 @@ final readonly class IncidentLogger
 
     /**
      * @param array<string, mixed> $context
-     * @throws RandomException
      */
     private function log(string $level, string $message, array $context = [], ?Throwable $exception = null): string
     {
-        $incidentId = $this->generateIncidentId();
+        $incidentId = Uuid::v4()->toRfc4122();
 
         $this->logger->log(
             $level,
@@ -74,20 +69,5 @@ final readonly class IncidentLogger
         );
 
         return $incidentId;
-    }
-
-    /**
-     * @throws RandomException
-     */
-    private function generateIncidentId(): string
-    {
-        $bytes = random_bytes(16);
-        $bytes[6] = chr((ord($bytes[6]) & 0x0f) | 0x40);
-        $bytes[8] = chr((ord($bytes[8]) & 0x3f) | 0x80);
-
-        return vsprintf(
-            '%s%s-%s-%s-%s-%s%s%s',
-            str_split(bin2hex($bytes), 4),
-        );
     }
 }
