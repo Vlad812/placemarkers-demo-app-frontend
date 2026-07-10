@@ -1,0 +1,11 @@
+{% extends 'layout.html.twig' %}
+
+{% block title %}Placemarkers{% endblock %}
+
+{% block content %}
+    <nav class="d-flex flex-column gap-4">
+        <a class="display-6 text-decoration-none" href="{{ path('placemark_create') }}">Создание меток</a>
+        <a class="display-6 text-decoration-none" href="{{ path('placemark_search') }}">Поиск меток</a>
+        <a class="display-6 text-decoration-none" href="{{ path('tags_index') }}">Управление тегами</a>
+    </nav>
+{% endblock %}

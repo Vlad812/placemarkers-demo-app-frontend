@@ -24,8 +24,6 @@ services:
         shared: false
     App\Infrastructure\Http\Responder\RedirectResponder:
         shared: false
-    App\Infrastructure\Http\Responder\PlainTextResponder:
-        shared: false
     App\Infrastructure\Http\Responder\Auth\:
         resource: '../src/Infrastructure/Http/Responder/Auth/*'
         shared: false
