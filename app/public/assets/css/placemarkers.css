@@ -74,6 +74,203 @@
     padding: 1.25rem;
 }
 
+/* Форма создания метки — двухколоночный layout */
+.placemark-form-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 1.25rem;
+    align-items: stretch;
+}
+
+.placemark-form-layout__main,
+.placemark-form-layout__aside {
+    display: flex;
+    min-height: 0;
+}
+
+.placemark-form-layout__main .placemark-form-panel,
+.placemark-form-layout__aside .placemark-form-panel {
+    flex: 1 1 auto;
+    width: 100%;
+}
+
+@media (max-width: 767.98px) {
+    .placemark-form-layout {
+        grid-template-columns: 1fr;
+    }
+}
+
+.placemark-form-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    height: 100%;
+    padding: 1rem 1.125rem;
+    border: 1px solid #dbeafe;
+    border-radius: 0.625rem;
+    background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9);
+}
+
+.placemark-form-panel--description {
+    border-color: #e2e8f0;
+    background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+}
+
+.placemark-form-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    margin-bottom: 0.375rem;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    color: #475569;
+}
+
+.placemark-form-label__required {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-left: 0.125rem;
+    font-size: 0.9375rem;
+    font-weight: 700;
+    line-height: 1;
+    color: #ef4444;
+}
+
+.placemark-form-label__icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.5rem;
+    height: 1.5rem;
+    border-radius: 0.375rem;
+    background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+    color: #2563eb;
+    flex-shrink: 0;
+}
+
+.placemark-form-panel--description .placemark-form-label__icon {
+    background: linear-gradient(135deg, #e2e8f0 0%, #cbd5e1 100%);
+    color: #475569;
+}
+
+.placemark-form-field .form-control,
+.placemark-form-field .form-select {
+    border-color: #cbd5e1;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.placemark-form-field .form-control:focus,
+.placemark-form-field .form-select:focus {
+    border-color: #93c5fd;
+    box-shadow: 0 0 0 0.2rem rgba(59, 130, 246, 0.15);
+}
+
+.placemark-form-coords {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem;
+    padding: 0.75rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 0.5rem;
+    background-color: rgba(248, 250, 252, 0.9);
+}
+
+.placemark-form-coords .form-control {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    font-size: 0.875rem;
+    text-align: center;
+}
+
+.placemark-form-tags {
+    display: flex;
+    flex-direction: column;
+    gap: 0.625rem;
+    margin-top: auto;
+}
+
+.placemark-form-tags-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    width: 100%;
+    padding: 0.5rem 1rem;
+    border: 1px dashed #93c5fd;
+    border-radius: 0.5rem;
+    background: linear-gradient(180deg, #eff6ff 0%, #dbeafe 100%);
+    color: #1d4ed8;
+    font-size: 0.875rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s ease, border-color 0.15s ease, transform 0.1s ease;
+}
+
+.placemark-form-tags-btn:hover {
+    background: linear-gradient(180deg, #dbeafe 0%, #bfdbfe 100%);
+    border-color: #60a5fa;
+    color: #1e40af;
+}
+
+.placemark-form-tags-btn:active {
+    transform: scale(0.99);
+}
+
+.placemark-form-tags-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.375rem;
+    min-height: 0;
+}
+
+.placemark-form-tags-chips:not(:empty) {
+    padding: 0.5rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 0.5rem;
+    background-color: #fff;
+}
+
+.placemark-form-tags-chips .badge {
+    padding: 0.35rem 0.625rem;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    border-radius: 999px;
+    background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%) !important;
+    color: #1e40af !important;
+    border: 1px solid #93c5fd;
+}
+
+.placemark-form-panel--description {
+    flex: 1 1 auto;
+}
+
+.placemark-form-description__input {
+    flex: 1 1 auto;
+    min-height: 12rem;
+    height: 100%;
+    resize: none;
+    border-color: #cbd5e1;
+    line-height: 1.55;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.placemark-form-description__input:focus {
+    border-color: #94a3b8;
+    box-shadow: 0 0 0 0.2rem rgba(100, 116, 139, 0.12);
+}
+
+.placemark-form-actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 1.25rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid #e2e8f0;
+}
+
 .placemark-section--map .placemark-map {
     border-radius: 0.75rem;
 }

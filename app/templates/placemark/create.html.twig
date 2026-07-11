@@ -28,42 +28,87 @@
         </div>
         <div class="placemark-section__body">
             <form class="placemark-form" novalidate>
-                <div class="row g-3">
-                    <div class="col-md-6">
-                        <label class="form-label">Название</label>
-                        <input type="text" class="form-control placemark-name" placeholder="Название метки" required>
+                <div class="placemark-form-layout">
+                    <div class="placemark-form-layout__main">
+                        <div class="placemark-form-panel">
+                            <div class="placemark-form-field">
+                                <label class="form-label placemark-form-label">
+                                    <span class="placemark-form-label__icon" aria-hidden="true">
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+                                    </span>
+                                    Название
+                                    <span class="placemark-form-label__required" title="Обязательное поле" aria-hidden="true">*</span>
+                                    <span class="visually-hidden"> (обязательно)</span>
+                                </label>
+                                <input type="text" class="form-control placemark-name" placeholder="Название метки" required>
+                            </div>
+
+                            <div class="placemark-form-coords">
+                                <div class="placemark-form-field">
+                                    <label class="form-label placemark-form-label">
+                                        <span class="placemark-form-label__icon" aria-hidden="true">
+                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></svg>
+                                        </span>
+                                        Широта (lat)
+                                        <span class="placemark-form-label__required" title="Обязательное поле" aria-hidden="true">*</span>
+                                        <span class="visually-hidden"> (обязательно)</span>
+                                    </label>
+                                    <input type="text" class="form-control placemark-lat coords" placeholder="59.94000000" required>
+                                </div>
+                                <div class="placemark-form-field">
+                                    <label class="form-label placemark-form-label">
+                                        <span class="placemark-form-label__icon" aria-hidden="true">
+                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></svg>
+                                        </span>
+                                        Долгота (lon)
+                                        <span class="placemark-form-label__required" title="Обязательное поле" aria-hidden="true">*</span>
+                                        <span class="visually-hidden"> (обязательно)</span>
+                                    </label>
+                                    <input type="text" class="form-control placemark-lon coords" placeholder="30.31000000" required>
+                                </div>
+                            </div>
+
+                            <div class="placemark-form-field">
+                                <label class="form-label placemark-form-label">
+                                    <span class="placemark-form-label__icon" aria-hidden="true">
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                                    </span>
+                                    Тип метки
+                                </label>
+                                <select class="form-select placemark-type">
+                                    {% for type in placemarkerTypes|default([]) %}
+                                        <option value="{{ type.slug }}">{{ type.name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+
+                            <div class="placemark-form-tags">
+                                <button type="button" class="placemark-form-tags-btn" data-bs-toggle="modal" data-bs-target="#placemark-tags-modal">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+                                    Добавить теги
+                                </button>
+                                <div id="selected-tags-container" class="placemark-form-tags-chips"></div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="col-md-3">
-                        <label class="form-label">Широта (lat)</label>
-                        <input type="text" class="form-control placemark-lat coords" placeholder="59.94000000" required>
+
+                    <div class="placemark-form-layout__aside">
+                        <div class="placemark-form-panel placemark-form-panel--description">
+                            <label class="form-label placemark-form-label">
+                                <span class="placemark-form-label__icon" aria-hidden="true">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="17" y1="10" x2="3" y2="10"/><line x1="21" y1="6" x2="3" y2="6"/><line x1="21" y1="14" x2="3" y2="14"/><line x1="17" y1="18" x2="3" y2="18"/></svg>
+                                </span>
+                                Описание
+                            </label>
+                            <textarea class="form-control placemark-description placemark-form-description__input" placeholder="Расскажите подробнее о месте: что здесь интересного, как добраться…"></textarea>
+                        </div>
                     </div>
-                    <div class="col-md-3">
-                        <label class="form-label">Долгота (lon)</label>
-                        <input type="text" class="form-control placemark-lon coords" placeholder="30.31000000" required>
-                    </div>
-                    <div class="col-md-6">
-                        <label class="form-label">Тип метки</label>
-                        <select class="form-select placemark-type">
-                            {% for type in placemarkerTypes|default([]) %}
-                                <option value="{{ type.slug }}">{{ type.name }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                    <div class="col-md-6 d-flex flex-column justify-content-end">
-                        <button type="button" class="btn btn-outline-secondary w-100 mb-0" data-bs-toggle="modal" data-bs-target="#placemark-tags-modal">
-                            Добавить теги
-                        </button>
-                        <div id="selected-tags-container" class="mt-2 d-flex flex-wrap gap-1"></div>
-                    </div>
-                    <div class="col-12">
-                        <label class="form-label">Описание</label>
-                        <textarea class="form-control placemark-description" rows="3" placeholder="Описание метки"></textarea>
-                    </div>
-                    <div class="col-12">
-                        <button type="button" class="btn btn-primary placemark-save">
-                            <span class="btn-label">Сохранить</span>
-                        </button>
-                    </div>
+                </div>
+
+                <div class="placemark-form-actions">
+                    <button type="button" class="btn btn-primary placemark-save px-4">
+                        <span class="btn-label">Сохранить</span>
+                    </button>
                 </div>
             </form>
         </div>
