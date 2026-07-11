@@ -11,7 +11,6 @@ use App\Application\DTO\Api\Payload\TagCreatePayload;
 use App\Application\Port\Api\PlacemarkerApiInterface;
 use App\Infrastructure\Service\Api\AccessTokenProviderInterface;
 use App\Infrastructure\Service\IncidentLoggerInterface;
-use Random\RandomException;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
@@ -28,23 +27,8 @@ final readonly class PlacemarkerApiClient extends AbstractAuthenticatedHttpApiCl
     }
 
     /**
-     * @throws TransportExceptionInterface
-     * @throws RandomException
-     */
-    public function getAll(): HttpApiResult
-    {
-        return $this->executeRequest(
-            'GET',
-            '/api/placemarkers',
-            $this->withAuthHeaders(),
-            'Не удалось загрузить метки.',
-        );
-    }
-
-    /**
      * @param PlacemarkerCreatePayload $payload
      * @return HttpApiResult
-     * @throws RandomException
      * @throws TransportExceptionInterface
      */
     public function create(PlacemarkerCreatePayload $payload): HttpApiResult
@@ -61,7 +45,6 @@ final readonly class PlacemarkerApiClient extends AbstractAuthenticatedHttpApiCl
      * @param string $id
      * @param PlacemarkerUpdatePayload $payload
      * @return HttpApiResult
-     * @throws RandomException
      * @throws TransportExceptionInterface
      */
     public function update(string $id, PlacemarkerUpdatePayload $payload): HttpApiResult
@@ -77,7 +60,6 @@ final readonly class PlacemarkerApiClient extends AbstractAuthenticatedHttpApiCl
     /**
      * @param string $id
      * @return HttpApiResult
-     * @throws RandomException
      * @throws TransportExceptionInterface
      */
     public function delete(string $id): HttpApiResult
@@ -93,7 +75,6 @@ final readonly class PlacemarkerApiClient extends AbstractAuthenticatedHttpApiCl
     /**
      * @param TagCreatePayload $payload
      * @return HttpApiResult
-     * @throws RandomException
      * @throws TransportExceptionInterface
      */
     public function createTag(TagCreatePayload $payload): HttpApiResult

@@ -11,8 +11,6 @@ use App\Application\DTO\Api\Payload\TagCreatePayload;
 
 interface PlacemarkerApiInterface
 {
-    public function getAll(): HttpApiResult;
-
     public function create(PlacemarkerCreatePayload $payload): HttpApiResult;
 
     public function update(string $id, PlacemarkerUpdatePayload $payload): HttpApiResult;

@@ -8,7 +8,6 @@ use App\Application\DTO\Api\HttpApiResult;
 use App\Application\Port\Api\SearchApiInterface;
 use App\Infrastructure\Service\Api\AccessTokenProviderInterface;
 use App\Infrastructure\Service\IncidentLoggerInterface;
-use Random\RandomException;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
@@ -31,7 +30,6 @@ final readonly class SearchApiClient extends AbstractAuthenticatedHttpApiClient 
      * @param array $tags
      * @param array $types
      * @return HttpApiResult
-     * @throws RandomException
      * @throws TransportExceptionInterface
      */
     public function search(
@@ -65,7 +63,6 @@ final readonly class SearchApiClient extends AbstractAuthenticatedHttpApiClient 
 
     /**
      * @return HttpApiResult
-     * @throws RandomException
      * @throws TransportExceptionInterface
      */
     public function getUserTags(): HttpApiResult
@@ -80,7 +77,6 @@ final readonly class SearchApiClient extends AbstractAuthenticatedHttpApiClient 
 
     /**
      * @return HttpApiResult
-     * @throws RandomException
      * @throws TransportExceptionInterface
      */
     public function getPlacemarkerTypes(): HttpApiResult
@@ -90,6 +86,25 @@ final readonly class SearchApiClient extends AbstractAuthenticatedHttpApiClient 
             '/search/types',
             $this->withAuthHeaders(),
             'Не удалось загрузить типы меток.',
+        );
+    }
+
+    /**
+     * @throws TransportExceptionInterface
+     */
+    public function getRecent(int $limit): HttpApiResult
+    {
+        $options = $this->withAuthHeaders();
+
+        if ($limit > 0) {
+            $options['query'] = ['limit' => $limit];
+        }
+
+        return $this->executeRequest(
+            'GET',
+            '/search/recent',
+            $options,
+            'Не удалось загрузить метки.',
         );
     }
 
