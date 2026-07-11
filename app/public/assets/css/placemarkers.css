@@ -286,6 +286,68 @@
     background-color: rgba(248, 250, 252, 0.8);
 }
 
+.placemark-cards-subsection + .placemark-cards-subsection {
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid #e2e8f0;
+}
+
+.placemark-cards-subsection__header {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+    margin-bottom: 0.875rem;
+    padding: 0.625rem 0.875rem;
+    border-radius: 0.5rem;
+    border-left: 3px solid transparent;
+}
+
+.placemark-cards-subsection--added .placemark-cards-subsection__header {
+    background: linear-gradient(90deg, #eff6ff 0%, rgba(239, 246, 255, 0.25) 100%);
+    border-left-color: #3b82f6;
+}
+
+.placemark-cards-subsection--recent .placemark-cards-subsection__header {
+    background: linear-gradient(90deg, #f0fdf4 0%, rgba(240, 253, 244, 0.25) 100%);
+    border-left-color: #22c55e;
+}
+
+.placemark-cards-subsection__icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.75rem;
+    height: 1.75rem;
+    border-radius: 0.375rem;
+    flex-shrink: 0;
+}
+
+.placemark-cards-subsection--added .placemark-cards-subsection__icon {
+    background-color: #dbeafe;
+    color: #2563eb;
+}
+
+.placemark-cards-subsection--recent .placemark-cards-subsection__icon {
+    background-color: #dcfce7;
+    color: #16a34a;
+}
+
+.placemark-cards-subsection__title {
+    margin: 0;
+    font-size: 0.875rem;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    color: #334155;
+}
+
+.placemark-cards-subsection--added .placemark-cards-subsection__title {
+    color: #1e40af;
+}
+
+.placemark-cards-subsection--recent .placemark-cards-subsection__title {
+    color: #166534;
+}
+
 .placemark-saved-list:not(:empty) + .placemark-cards-empty {
     display: none;
 }

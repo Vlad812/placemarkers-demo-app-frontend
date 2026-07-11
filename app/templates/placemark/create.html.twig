@@ -120,7 +120,24 @@
             <p class="placemark-section__hint mb-0">Нажмите на карточку, чтобы изменить название и описание</p>
         </div>
         <div class="placemark-section__body">
-            <div id="placemark-saved-list" class="row g-2 placemark-saved-list"></div>
+            <div id="placemark-added-section" class="placemark-cards-subsection placemark-cards-subsection--added" style="display: none;">
+                <div class="placemark-cards-subsection__header">
+                    <span class="placemark-cards-subsection__icon" aria-hidden="true">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+                    </span>
+                    <h3 class="placemark-cards-subsection__title">Добавлено :</h3>
+                </div>
+                <div id="placemark-added-list" class="row g-2 placemark-saved-list"></div>
+            </div>
+            <div id="placemark-last10-section" class="placemark-cards-subsection placemark-cards-subsection--recent" style="display: none;">
+                <div class="placemark-cards-subsection__header">
+                    <span class="placemark-cards-subsection__icon" aria-hidden="true">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                    </span>
+                    <h3 class="placemark-cards-subsection__title">Последние 10 меток:</h3>
+                </div>
+                <div id="placemark-saved-list" class="row g-2 placemark-saved-list"></div>
+            </div>
             <p class="placemark-cards-empty mb-0">Пока нет сохранённых меток</p>
         </div>
     </section>

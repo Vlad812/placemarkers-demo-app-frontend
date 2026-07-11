@@ -59,13 +59,21 @@
         let selectedTags = [];
 
         const $savedList = $('#placemark-saved-list');
+        const $addedList = $('#placemark-added-list');
+        const $addedSection = $('#placemark-added-section');
+        const $last10Section = $('#placemark-last10-section');
         const $savedTemplate = $('#placemark-saved-card-template');
         const $newForm = $('#placemark-new-form');
         const editModalEl = document.getElementById('placemark-edit-modal');
         const editModal = editModalEl ? new bootstrap.Modal(editModalEl) : null;
 
         function updateEmptyMessage() {
-            const hasCards = Object.keys(placemarkersStore).length > 0;
+            const hasAddedCards = $addedList.children().length > 0;
+            const hasSavedCards = $savedList.children().length > 0;
+            const hasCards = hasAddedCards || hasSavedCards;
+
+            $addedSection.toggle(hasAddedCards);
+            $last10Section.toggle(hasSavedCards);
             $('.placemark-cards-empty').toggle(!hasCards);
         }
 
@@ -152,16 +160,17 @@
             return num === null ? value : num.toPrecision(8);
         }
 
-        function renderSavedCard(data) {
+        function renderSavedCard(data, isNew) {
             const $col = $($savedTemplate.html().trim());
             const $card = $col.find('.placemark-saved-card');
+            const $targetList = isNew ? $addedList : $savedList;
 
             $card.attr('data-placemarker-id', data.id);
             $card.find('.placemark-saved-name').text(data.name).attr('title', data.name);
             $card.find('.placemark-saved-lat').text(formatCoord(data.lat)).attr('title', 'lat: ' + data.lat);
             $card.find('.placemark-saved-lon').text(formatCoord(data.lon)).attr('title', 'lon: ' + data.lon);
 
-            $savedList.append($col);
+            $targetList.append($col);
             bindSavedCard($col, data.id);
 
             return $col;
@@ -169,7 +178,7 @@
 
         function updateSavedCardUi(id) {
             const data = placemarkersStore[id];
-            const $card = $savedList.find('[data-placemarker-id="' + id + '"]');
+            const $card = $savedList.add($addedList).find('[data-placemarker-id="' + id + '"]');
 
             if (!data || !$card.length) {
                 return;
@@ -286,7 +295,7 @@
 
                 removeDraftMarker();
                 addMapMarker(response.id, latNum, lonNum, response.name);
-                renderSavedCard(placemarkersStore[response.id]);
+                renderSavedCard(placemarkersStore[response.id], true);
                 resetNewForm();
                 updateEmptyMessage();
             }).fail(function (xhr) {
@@ -433,8 +442,9 @@
                         description: item.description || ''
                     };
                     addMapMarker(item.id, parseFloat(item.lat), parseFloat(item.lon), item.name);
-                    renderSavedCard(placemarkersStore[item.id]);
+                    renderSavedCard(placemarkersStore[item.id], false);
                 });
+
                 updateEmptyMessage();
             }
         };
