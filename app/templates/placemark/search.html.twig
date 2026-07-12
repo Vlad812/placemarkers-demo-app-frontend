@@ -27,6 +27,7 @@
             data-default-radius="{{ defaultRadiusMeters }}"
 
             data-api-url="{{ path('api_placemarker_search') }}"
+            data-get-url="{{ path('api_search_get_placemarker', {id: '__ID__'}) }}"
             data-save-url="{{ path('api_placemarker_collection_save') }}"
             data-collections-url="{{ path('api_placemarker_collection_list') }}"
 
@@ -143,6 +144,92 @@
         </div>
 
     </section>
+
+
+
+    <div class="modal fade placemark-info-modal" id="placemark-info-modal" tabindex="-1" aria-labelledby="placemark-info-modal-label" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered placemark-info-modal-dialog">
+            <div class="modal-content placemark-info-modal-content">
+                <div class="modal-header placemark-info-modal-header">
+                    <div class="placemark-info-modal-header__main">
+                        <span class="placemark-info-modal-pin" aria-hidden="true">📍</span>
+                        <div>
+                            <h5 class="modal-title" id="placemark-info-modal-label">Информация о метке</h5>
+                        </div>
+                    </div>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+                </div>
+                <div class="modal-body placemark-info-modal-body">
+                    <div id="placemark-info-loading" class="placemark-info-loading" hidden>
+                        <span class="spinner-border text-primary" role="status" aria-hidden="true"></span>
+                        <span class="placemark-info-loading__text">Загрузка данных…</span>
+                    </div>
+
+                    <div id="placemark-info-error" class="alert alert-danger placemark-info-error mb-0" role="alert" hidden></div>
+
+                    <div id="placemark-info-content" class="placemark-info-content">
+                        <div class="placemark-info-hero">
+                            <h3 id="placemark-info-name" class="placemark-info-hero__title"></h3>
+                            <span id="placemark-info-type" class="placemark-info-type-badge"></span>
+                        </div>
+
+                        <div class="placemark-info-grid">
+                            <section class="placemark-info-card placemark-info-card--coords">
+                                <div class="placemark-info-card__header">
+                                    <span class="placemark-info-card__icon" aria-hidden="true">
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></svg>
+                                    </span>
+                                    <span class="placemark-info-card__label">Координаты</span>
+                                </div>
+                                <div class="placemark-info-coords">
+                                    <div class="placemark-info-coord">
+                                        <span class="placemark-info-coord__label">Широта</span>
+                                        <span id="placemark-info-lat" class="placemark-info-coord__value"></span>
+                                    </div>
+                                    <div class="placemark-info-coord">
+                                        <span class="placemark-info-coord__label">Долгота</span>
+                                        <span id="placemark-info-lon" class="placemark-info-coord__value"></span>
+                                    </div>
+                                </div>
+                            </section>
+
+                            <section class="placemark-info-card placemark-info-card--tags">
+                                <div class="placemark-info-card__header">
+                                    <span class="placemark-info-card__icon" aria-hidden="true">
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+                                    </span>
+                                    <span class="placemark-info-card__label">Теги</span>
+                                </div>
+                                <div id="placemark-info-tags" class="placemark-info-tags"></div>
+                                <p id="placemark-info-tags-empty" class="placemark-info-empty-hint mb-0" hidden>Теги не указаны</p>
+                            </section>
+
+                            <section class="placemark-info-card placemark-info-card--description">
+                                <div class="placemark-info-card__header">
+                                    <span class="placemark-info-card__icon" aria-hidden="true">
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="17" y1="10" x2="3" y2="10"/><line x1="21" y1="6" x2="3" y2="6"/><line x1="21" y1="14" x2="3" y2="14"/><line x1="17" y1="18" x2="3" y2="18"/></svg>
+                                    </span>
+                                    <span class="placemark-info-card__label">Описание</span>
+                                </div>
+                                <div id="placemark-info-description" class="placemark-info-description"></div>
+                            </section>
+                        </div>
+
+                        <div class="placemark-info-meta">
+                            <span class="placemark-info-meta__icon" aria-hidden="true">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                            </span>
+                            <span class="placemark-info-meta__label">Добавлена:</span>
+                            <span id="placemark-info-created-at" class="placemark-info-meta__value"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer placemark-info-modal-footer justify-content-center">
+                    <button type="button" class="btn btn-outline-secondary px-4" data-bs-dismiss="modal">Закрыть</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
 
 
@@ -298,7 +385,7 @@
 
         <div class="col-6 col-sm-4 col-md-3 col-lg-2">
 
-            <div class="card placemark-saved-card h-100">
+            <div class="card placemark-saved-card h-100" role="button" tabindex="0">
 
                 <div class="card-body position-relative text-center p-3">
 

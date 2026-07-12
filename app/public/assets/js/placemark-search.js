@@ -98,6 +98,7 @@
 
         const apiUrl = $mapEl.data('api-url');
 
+        const getUrlTemplate = $mapEl.data('get-url');
         const collectionsUrl = $mapEl.data('collections-url');
         const saveUrl = $mapEl.data('save-url');
 
@@ -141,8 +142,23 @@
         const $typeCheckboxes = $('.search-type-checkbox');
         let tagsModal = null;
         let typesModal = null;
+        let infoModal = null;
         let selectedTags = [];
         let selectedTypes = [];
+        let activeInfoRequest = null;
+
+        const $infoModalEl = $('#placemark-info-modal');
+        const $infoContent = $('#placemark-info-content');
+        const $infoName = $('#placemark-info-name');
+        const $infoLat = $('#placemark-info-lat');
+        const $infoLon = $('#placemark-info-lon');
+        const $infoType = $('#placemark-info-type');
+        const $infoTags = $('#placemark-info-tags');
+        const $infoTagsEmpty = $('#placemark-info-tags-empty');
+        const $infoDescription = $('#placemark-info-description');
+        const $infoCreatedAt = $('#placemark-info-created-at');
+        const $infoError = $('#placemark-info-error');
+        const $infoLoading = $('#placemark-info-loading');
 
         if ($saveModalEl.length && window.bootstrap) {
             saveModal = new window.bootstrap.Modal($saveModalEl[0]);
@@ -155,6 +171,202 @@
         }
         if ($typesModalEl.length && window.bootstrap) {
             typesModal = new window.bootstrap.Modal($typesModalEl[0]);
+        }
+        if ($infoModalEl.length && window.bootstrap) {
+            infoModal = new window.bootstrap.Modal($infoModalEl[0]);
+        }
+
+
+
+        function formatCoord(value) {
+            const parsed = parseFloat(value);
+            return isNaN(parsed) ? String(value) : parsed.toPrecision(8);
+        }
+
+        function buildTagNameMap() {
+            const map = {};
+
+            $tagCheckboxes.each(function () {
+                map[$(this).val()] = $(this).data('name');
+            });
+
+            return map;
+        }
+
+        function buildTypeLabelMap() {
+            const map = {};
+
+            $typeCheckboxes.each(function () {
+                map[$(this).val()] = $(this).data('label');
+            });
+
+            return map;
+        }
+
+        function formatCreatedAt(value) {
+            if (!value) {
+                return '—';
+            }
+
+            const date = new Date(value);
+
+            if (isNaN(date.getTime())) {
+                return value;
+            }
+
+            return date.toLocaleString('ru-RU', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+
+        function getPlacemarkerUrl(id) {
+            if (!getUrlTemplate) {
+                return '';
+            }
+
+            return String(getUrlTemplate).replace('__ID__', encodeURIComponent(id));
+        }
+
+        function clearInfoModal() {
+            $infoName.text('');
+            $infoLat.text('');
+            $infoLon.text('');
+            $infoType.text('');
+            $infoTags.empty();
+            $infoTagsEmpty.prop('hidden', true);
+            $infoDescription.text('').removeClass('placemark-info-description--empty');
+            $infoCreatedAt.text('');
+            $infoError.prop('hidden', true).text('');
+            $infoLoading.prop('hidden', true);
+            $infoContent.prop('hidden', true);
+        }
+
+        function setInfoModalLoading(isLoading) {
+            $infoLoading.prop('hidden', !isLoading);
+
+            if (isLoading) {
+                $infoContent.prop('hidden', true);
+                $infoError.prop('hidden', true);
+            }
+        }
+
+        function setInfoModalContentVisible(isVisible) {
+            $infoContent.prop('hidden', !isVisible);
+        }
+
+        function renderInfoTags(tagIds) {
+            const tagNameMap = buildTagNameMap();
+            const tags = Array.isArray(tagIds) ? tagIds : [];
+
+            $infoTags.empty();
+
+            if (tags.length === 0) {
+                $infoTagsEmpty.prop('hidden', false);
+                return;
+            }
+
+            $infoTagsEmpty.prop('hidden', true);
+
+            tags.forEach(function (tagId) {
+                const label = tagNameMap[tagId] || tagId;
+                $('<span class="placemark-info-tag"></span>').text(label).appendTo($infoTags);
+            });
+        }
+
+        function fillInfoModal(data) {
+            const typeLabelMap = buildTypeLabelMap();
+            const typeLabel = typeLabelMap[data.type_id] || data.type_id || 'Не указан';
+            const createdAtLabel = formatCreatedAt(data.created_at);
+            const description = (data.description || '').trim();
+
+            $infoName.text(data.name || 'Без названия');
+            $infoLat.text(formatCoord(data.lat));
+            $infoLon.text(formatCoord(data.lon));
+            $infoType.text(typeLabel);
+            renderInfoTags(data.tags);
+
+            if (description) {
+                $infoDescription
+                    .text(description)
+                    .removeClass('placemark-info-description--empty');
+            } else {
+                $infoDescription
+                    .text('Описание не указано')
+                    .addClass('placemark-info-description--empty');
+            }
+
+            $infoCreatedAt.text(createdAtLabel);
+        }
+
+        function showInfoError(message) {
+            $infoContent.prop('hidden', true);
+            $infoError.text(message).prop('hidden', false);
+        }
+
+        function openInfoModal(id) {
+            if (!id || !getUrlTemplate) {
+                return;
+            }
+
+            if (activeInfoRequest) {
+                activeInfoRequest.abort();
+                activeInfoRequest = null;
+            }
+
+            clearInfoModal();
+            setInfoModalLoading(true);
+
+            if (infoModal) {
+                infoModal.show();
+            }
+
+            activeInfoRequest = $.ajax({
+                url: getPlacemarkerUrl(id),
+                method: 'GET'
+            }).done(function (data) {
+                const placemarker = data && data.id ? data : (data && data.data ? data.data : null);
+
+                if (!placemarker) {
+                    showInfoError('Не удалось загрузить данные метки.');
+                    return;
+                }
+
+                fillInfoModal(placemarker);
+                setInfoModalContentVisible(true);
+            }).fail(function (xhr) {
+                let message = 'Не удалось загрузить информацию о метке.';
+
+                if (xhr.responseJSON && xhr.responseJSON.errors && xhr.responseJSON.errors[0]) {
+                    message = xhr.responseJSON.errors[0].message || message;
+                } else if (xhr.responseJSON && xhr.responseJSON.message) {
+                    message = xhr.responseJSON.message;
+                }
+
+                showInfoError(message);
+            }).always(function () {
+                activeInfoRequest = null;
+                setInfoModalLoading(false);
+            });
+        }
+
+        function bindResultCard($card, id) {
+            $card.attr('data-placemarker-id', id);
+            $card.addClass('placemark-saved-card--interactive');
+
+            $card.on('click', function () {
+                openInfoModal(id);
+            });
+
+            $card.on('keydown', function (event) {
+                if (event.key === 'Enter' || event.key === ' ') {
+                    event.preventDefault();
+                    openInfoModal(id);
+                }
+            });
         }
 
 
@@ -354,9 +566,11 @@
 
             $card.find('.placemark-saved-name').text(item.name).attr('title', item.name);
 
-            $card.find('.placemark-saved-lat').text(item.lat).attr('title', 'lat: ' + item.lat);
+            $card.find('.placemark-saved-lat').text(formatCoord(item.lat)).attr('title', 'lat: ' + item.lat);
 
-            $card.find('.placemark-saved-lon').text(item.lon).attr('title', 'lon: ' + item.lon);
+            $card.find('.placemark-saved-lon').text(formatCoord(item.lon)).attr('title', 'lon: ' + item.lon);
+
+            bindResultCard($card, String(item.id));
 
 
 
@@ -826,6 +1040,15 @@
         $saveModalEl.on('hidden.bs.modal', clearSaveError);
 
         $collectionNameInput.on('input', clearSaveError);
+
+        $infoModalEl.on('hidden.bs.modal', function () {
+            if (activeInfoRequest) {
+                activeInfoRequest.abort();
+                activeInfoRequest = null;
+            }
+
+            clearInfoModal();
+        });
 
 
 

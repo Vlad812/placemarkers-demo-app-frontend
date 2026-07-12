@@ -389,6 +389,34 @@
     outline: none;
 }
 
+.placemark-saved-card--interactive::after {
+    content: "Подробнее";
+    position: absolute;
+    left: 50%;
+    bottom: 0.45rem;
+    transform: translateX(-50%);
+    padding: 0.15rem 0.5rem;
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    color: #2563eb;
+    background-color: rgba(239, 246, 255, 0.95);
+    border: 1px solid #bfdbfe;
+    border-radius: 999px;
+    opacity: 0;
+    transition: opacity 0.15s ease;
+    pointer-events: none;
+}
+
+.placemark-saved-card--interactive .card-body {
+    padding-bottom: 1.75rem;
+}
+
+.placemark-saved-card--interactive:hover::after,
+.placemark-saved-card--interactive:focus::after {
+    opacity: 1;
+}
+
 .placemark-saved-card .btn-close {
     position: absolute;
     top: 0.35rem;
@@ -465,6 +493,306 @@
     border-top: 1px solid #e2e8f0;
     background-color: #f8fafc;
     padding: 1rem 1.25rem;
+}
+
+/* Модалка просмотра метки */
+.placemark-info-modal-dialog {
+    max-width: 44rem;
+}
+
+.placemark-info-modal-content {
+    border: none;
+    border-radius: 0.875rem;
+    box-shadow: 0 24px 60px rgba(15, 23, 42, 0.22);
+    overflow: hidden;
+}
+
+.placemark-info-modal-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 1.125rem 1.375rem;
+    border-bottom: 1px solid #dbeafe;
+    background: linear-gradient(135deg, #eff6ff 0%, #f0fdf4 55%, #f8fafc 100%);
+}
+
+.placemark-info-modal-header__main {
+    display: flex;
+    align-items: center;
+    gap: 0.875rem;
+    min-width: 0;
+}
+
+.placemark-info-modal-pin {
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    font-size: 1.375rem;
+    line-height: 1;
+    border-radius: 0.75rem;
+    background: linear-gradient(135deg, #ffffff 0%, #eff6ff 100%);
+    border: 1px solid #bfdbfe;
+    box-shadow: 0 2px 8px rgba(37, 99, 235, 0.12);
+}
+
+.placemark-info-modal-header .modal-title {
+    font-weight: 600;
+    font-size: 1.0625rem;
+    color: #0f172a;
+}
+
+.placemark-info-modal-body {
+    padding: 1.25rem 1.375rem 1.375rem;
+    background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
+}
+
+.placemark-info-loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    min-height: 14rem;
+    color: #64748b;
+}
+
+.placemark-info-loading__text {
+    font-size: 0.9375rem;
+}
+
+.placemark-info-error {
+    border-radius: 0.625rem;
+    border: 1px solid #fecaca;
+    background-color: #fef2f2;
+}
+
+.placemark-info-hero {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75rem 1rem;
+    margin-bottom: 1.125rem;
+    padding: 1rem 1.125rem;
+    border: 1px solid #dbeafe;
+    border-radius: 0.75rem;
+    background: linear-gradient(135deg, #ffffff 0%, #f8fbff 100%);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.95);
+}
+
+.placemark-info-hero__title {
+    margin: 0;
+    flex: 1 1 auto;
+    min-width: 0;
+    font-size: 1.25rem;
+    font-weight: 700;
+    line-height: 1.3;
+    color: #0f172a;
+    word-break: break-word;
+}
+
+.placemark-info-type-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.35rem 0.875rem;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: #1e40af;
+    background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+    border: 1px solid #93c5fd;
+    border-radius: 999px;
+    white-space: nowrap;
+}
+
+.placemark-info-type-badge::before {
+    content: "";
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 50%;
+    background-color: #3b82f6;
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+}
+
+.placemark-info-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.875rem;
+}
+
+.placemark-info-card {
+    padding: 0.875rem 1rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 0.75rem;
+    background: #ffffff;
+    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+}
+
+.placemark-info-card--description {
+    grid-column: 1 / -1;
+}
+
+.placemark-info-card__header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.75rem;
+}
+
+.placemark-info-card__icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.75rem;
+    height: 1.75rem;
+    border-radius: 0.5rem;
+    color: #2563eb;
+    background-color: #eff6ff;
+}
+
+.placemark-info-card__label {
+    font-size: 0.8125rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    color: #64748b;
+}
+
+.placemark-info-coords {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.625rem;
+}
+
+.placemark-info-coord {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    padding: 0.625rem 0.75rem;
+    border-radius: 0.5rem;
+    background: linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%);
+    border: 1px solid #e2e8f0;
+}
+
+.placemark-info-coord__label {
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: #94a3b8;
+}
+
+.placemark-info-coord__value {
+    font-size: 0.875rem;
+    font-weight: 600;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    color: #334155;
+    word-break: break-all;
+}
+
+.placemark-info-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    min-height: 1.75rem;
+}
+
+.placemark-info-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.3rem 0.8rem;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    color: #1d4ed8;
+    background: linear-gradient(135deg, #eff6ff 0%, #f8fafc 100%);
+    border: 1px solid #bfdbfe;
+    border-radius: 999px;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.placemark-info-tag::before {
+    content: "#";
+    font-weight: 700;
+    color: #60a5fa;
+}
+
+.placemark-info-description {
+    margin: 0;
+    padding: 0.875rem 1rem;
+    min-height: 4.5rem;
+    font-size: 0.9375rem;
+    line-height: 1.6;
+    color: #334155;
+    white-space: pre-wrap;
+    word-break: break-word;
+    border-radius: 0.625rem;
+    background: linear-gradient(180deg, #f8fafc 0%, #ffffff 100%);
+    border: 1px solid #e2e8f0;
+}
+
+.placemark-info-description--empty {
+    color: #94a3b8;
+    font-style: italic;
+    background: #f8fafc;
+}
+
+.placemark-info-empty-hint {
+    font-size: 0.875rem;
+    color: #94a3b8;
+    font-style: italic;
+}
+
+.placemark-info-meta {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.4rem 0.5rem;
+    margin-top: 1rem;
+    padding: 0.75rem 1rem;
+    border-radius: 0.625rem;
+    background-color: #f8fafc;
+    border: 1px dashed #cbd5e1;
+    font-size: 0.875rem;
+    color: #64748b;
+}
+
+.placemark-info-meta__icon {
+    display: inline-flex;
+    color: #64748b;
+}
+
+.placemark-info-meta__label {
+    font-weight: 500;
+}
+
+.placemark-info-meta__value {
+    font-weight: 600;
+    color: #334155;
+}
+
+.placemark-info-modal-footer {
+    border-top: 1px solid #e2e8f0;
+    background-color: #f8fafc;
+    padding: 0.875rem 1.375rem 1.125rem;
+}
+
+@media (max-width: 575.98px) {
+    .placemark-info-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .placemark-info-coords {
+        grid-template-columns: 1fr;
+    }
+
+    .placemark-info-hero {
+        flex-direction: column;
+        align-items: flex-start;
+    }
 }
 
 .search-hint {

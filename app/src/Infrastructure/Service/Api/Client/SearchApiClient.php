@@ -109,6 +109,19 @@ final readonly class SearchApiClient extends AbstractAuthenticatedHttpApiClient 
     }
 
     /**
+     * @throws TransportExceptionInterface
+     */
+    public function getPlacemarker(string $id): HttpApiResult
+    {
+        return $this->executeRequest(
+            'GET',
+            '/search/placemarkers/' . rawurlencode($id),
+            $this->withAuthHeaders(),
+            'Не удалось загрузить метку.',
+        );
+    }
+
+    /**
      * @return string
      */
     protected function getServiceName(): string

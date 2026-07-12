@@ -25,4 +25,6 @@ interface SearchApiInterface
     public function getPlacemarkerTypes(): HttpApiResult;
 
     public function getRecent(int $limit): HttpApiResult;
+
+    public function getPlacemarker(string $id): HttpApiResult;
 }
