@@ -10,13 +10,14 @@ final readonly class TagCreatePayload
 {
     public function __construct(
         public string $name,
+        public string $typeId,
         public ?string $description = null,
     ) {
     }
 
     public static function fromCommand(CreateTagCommand $command): self
     {
-        return new self($command->name, $command->description);
+        return new self($command->name, $command->typeId, $command->description);
     }
 
     /**
@@ -24,7 +25,10 @@ final readonly class TagCreatePayload
      */
     public function toArray(): array
     {
-        $payload = ['name' => $this->name];
+        $payload = [
+            'name' => $this->name,
+            'type_id' => $this->typeId,
+        ];
 
         if ($this->description !== null) {
             $payload['description'] = $this->description;

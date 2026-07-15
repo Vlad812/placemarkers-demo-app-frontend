@@ -10,19 +10,22 @@ final readonly class CreateTagCommand
 {
     public function __construct(
         public string $name,
+        public string $typeId,
         public ?string $description = null,
     ) {
     }
 
     /**
-     * @param array $data
-     * @return self
+     * @param array<string, mixed> $data
      */
     public static function fromRawValues(array $data): self
     {
         Assert::keyExists($data, 'name', 'Missing name.');
+        Assert::keyExists($data, 'type_id', 'Missing type_id.');
         Assert::stringNotEmpty(trim((string) $data['name']), 'Tag name must not be empty.');
         Assert::maxLength(trim((string) $data['name']), 255);
+        Assert::stringNotEmpty(trim((string) $data['type_id']), 'Type must not be empty.');
+        Assert::maxLength(trim((string) $data['type_id']), 50);
 
         $description = null;
         if (isset($data['description'])) {
@@ -30,6 +33,10 @@ final readonly class CreateTagCommand
             $description = $data['description'];
         }
 
-        return new self(trim((string) $data['name']), $description);
+        return new self(
+            trim((string) $data['name']),
+            trim((string) $data['type_id']),
+            $description,
+        );
     }
 }

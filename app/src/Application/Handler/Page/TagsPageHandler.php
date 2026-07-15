@@ -25,9 +25,21 @@ final readonly class TagsPageHandler
         }
 
         $userTags = $this->searchApiClient->getUserTags()->body;
+        $placemarkerTypes = $this->searchApiClient->getPlacemarkerTypes()->body;
+
+        $tagsByType = [];
+        foreach (is_array($userTags) ? $userTags : [] as $tag) {
+            if (!is_array($tag)) {
+                continue;
+            }
+            $typeId = is_string($tag['type_id'] ?? null) ? $tag['type_id'] : 'default';
+            $tagsByType[$typeId][] = $tag;
+        }
 
         return new HtmlPageResponse([
             'userTags' => $userTags,
+            'placemarkerTypes' => $placemarkerTypes,
+            'tagsByType' => $tagsByType,
         ]);
     }
 }

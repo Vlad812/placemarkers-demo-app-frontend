@@ -19,12 +19,38 @@
         $label.text(idleLabel);
     }
 
+    function ensureTypeGroup(typeId, typeName) {
+        let $group = $('.tags-type-group[data-type-id="' + typeId + '"]');
+        if ($group.length) {
+            return $group;
+        }
+
+        $('#empty-tags-row').remove();
+
+        $group = $(
+            '<div class="tags-type-group mb-4" data-type-id="' + typeId + '">' +
+                '<h6 class="text-muted text-uppercase small fw-semibold mb-3"></h6>' +
+                '<div class="table-responsive">' +
+                    '<table class="table table-hover align-middle mb-0">' +
+                        '<thead><tr><th>Название</th><th>Описание</th><th class="text-end">Действия</th></tr></thead>' +
+                        '<tbody class="tags-type-group__body"></tbody>' +
+                    '</table>' +
+                '</div>' +
+            '</div>'
+        );
+        $group.find('h6').text(typeName || typeId);
+        $('#tags-grouped-list').prepend($group);
+
+        return $group;
+    }
+
     function initTags() {
         const $form = $('#tag-create-form');
         if (!$form.length) {
             return;
         }
 
+        const $type = $('#tag-type');
         const $name = $('#tag-name');
         const $description = $('#tag-description');
         const $submitBtn = $form.find('button[type="submit"]');
@@ -32,8 +58,15 @@
         $form.on('submit', function (event) {
             event.preventDefault();
 
+            const typeId = String($type.val() || '').trim();
+            const typeName = $type.find('option:selected').text().trim();
             const nameVal = $name.val().trim();
             const descVal = $description.val().trim();
+
+            if (!typeId) {
+                alert('Выберите тип метки');
+                return;
+            }
 
             if (!nameVal) {
                 alert('Введите название тега');
@@ -47,27 +80,24 @@
                 url: '/api/tags',
                 contentType: 'application/json',
                 data: JSON.stringify({
+                    type_id: typeId,
                     name: nameVal,
                     description: descVal
                 })
             }).done(function (response) {
-                // Clear the form
                 $name.val('');
                 $description.val('');
 
-                // Render the new tag immediately (basic layout)
-                const $tr = $('<tr>');
-                $tr.append($('<td>').html('<span class="badge bg-primary rounded-pill px-3 py-2 fw-normal">' + response.name + '</span>'));
+                const $tr = $('<tr>').attr('data-tag-id', response.id || '');
+                $tr.append($('<td>').append(
+                    $('<span class="badge bg-primary rounded-pill px-3 py-2 fw-normal"></span>').text(response.name)
+                ));
                 $tr.append($('<td>').text(response.description || ''));
                 $tr.append($('<td class="text-end">').html('<button class="btn btn-sm btn-outline-danger" disabled title="Удаление пока не реализовано">Удалить</button>'));
 
-                // Remove empty state message if it exists
-                const $emptyTr = $('#empty-tags-row');
-                if ($emptyTr.length) {
-                    $emptyTr.remove();
-                }
-
-                $('#tags-list').prepend($tr);
+                ensureTypeGroup(response.type_id || typeId, typeName)
+                    .find('.tags-type-group__body')
+                    .prepend($tr);
             }).fail(function (xhr) {
                 let message = 'Не удалось создать тег.';
                 if (xhr.responseJSON && xhr.responseJSON.errors && xhr.responseJSON.errors[0]) {
