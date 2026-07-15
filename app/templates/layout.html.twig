@@ -48,7 +48,7 @@
         </div>
     </footer>
 
-    <script src="{{ asset('assets/jquery/jquery.min.js') }}"></script>
-    <script src="{{ asset('assets/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+    <script src="{{ asset('assets/jquery/jquery.min.js') }}?v={{ asset_mtime('assets/jquery/jquery.min.js') }}"></script>
+    <script src="{{ asset('assets/bootstrap/js/bootstrap.bundle.min.js') }}?v={{ asset_mtime('assets/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
     {% block page_scripts %}{% endblock %}
 {% endblock %}

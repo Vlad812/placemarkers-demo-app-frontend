@@ -19,6 +19,10 @@ services:
     App\:
         resource: '../src/'
 
+    App\Infrastructure\Service\Twig\AssetVersionExtension:
+        arguments:
+            $projectDir: '%kernel.project_dir%'
+
     # Responders are stateless but marked as non-shared to prevent state regressions.
     App\Infrastructure\Http\Responder\JsonResponder:
         shared: false
