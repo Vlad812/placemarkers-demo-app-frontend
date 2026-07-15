@@ -219,11 +219,12 @@
                 <div class="modal-body">
                     <div class="placemark-tags-list d-flex flex-wrap gap-2" id="available-tags-container">
                         {% if userTags|default([]) is empty %}
-                            <p class="text-muted w-100 text-center mb-0">У вас пока нет тегов. Создайте их в разделе "Мои теги".</p>
+                            <p class="text-muted w-100 text-center mb-0 tags-empty-hint">У вас пока нет тегов. Создайте их в разделе "Мои теги".</p>
                         {% else %}
+                            <p class="text-muted w-100 text-center mb-0 tags-type-empty-hint" hidden>Для выбранного типа пока нет тегов.</p>
                             {% for tag in userTags|default([]) %}
-                                <div>
-                                    <input type="checkbox" class="btn-check tag-checkbox" id="tag_{{ tag.id }}" value="{{ tag.id }}" data-name="{{ tag.name|e('html_attr') }}" autocomplete="off">
+                                <div class="tag-option" data-type-id="{{ tag.type_id|default('default')|e('html_attr') }}">
+                                    <input type="checkbox" class="btn-check tag-checkbox" id="tag_{{ tag.id }}" value="{{ tag.id }}" data-name="{{ tag.name|e('html_attr') }}" data-type-id="{{ tag.type_id|default('default')|e('html_attr') }}" autocomplete="off">
                                     <label class="btn btn-outline-primary rounded-pill px-3 py-1" for="tag_{{ tag.id }}">{{ tag.name }}</label>
                                 </div>
                             {% endfor %}
@@ -242,6 +243,6 @@
 
 {% block page_scripts %}
     <script src="https://api-maps.yandex.ru/2.1/?lang=ru_RU" defer></script>
-    <script src="{{ asset('assets/js/ymap-resize.js') }}" defer></script>
-    <script src="{{ asset('assets/js/placemark-create.js') }}" defer></script>
+    <script src="{{ asset('assets/js/ymap-resize.js') }}?v={{ asset_mtime('assets/js/ymap-resize.js') }}" defer></script>
+    <script src="{{ asset('assets/js/placemark-create.js') }}?v={{ asset_mtime('assets/js/placemark-create.js') }}" defer></script>
 {% endblock %}

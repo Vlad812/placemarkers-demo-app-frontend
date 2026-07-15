@@ -9,15 +9,13 @@ use Webmozart\Assert\Assert;
 final readonly class SearchPlacemarkersQuery
 {
     /**
-     * @param list<string> $tags
-     * @param list<string> $types
+     * @param list<array{type_id: string, tags: list<string>}> $filters
      */
     public function __construct(
         public float $lat,
         public float $lon,
         public int $radius,
-        public array $tags = [],
-        public array $types = [],
+        public array $filters = [],
     ) {
     }
 
@@ -45,39 +43,53 @@ final readonly class SearchPlacemarkersQuery
         Assert::numeric($radius, 'Radius must be numeric.');
         Assert::greaterThan((float) $radius, 0.0, 'Search radius must be greater than zero.');
 
+        Assert::keyExists($data, 'filters', 'Missing required parameter: filters.');
+
+        $filters = $data['filters'];
+        if (is_string($filters)) {
+            $filters = $filters === '' ? [] : json_decode($filters, true);
+        }
+        Assert::isArray($filters, 'Filters must be an array.');
+
         return new self(
             (float) $lat,
             (float) $lon,
             (int) $radius,
-            self::extractStringList($data, 'tags'),
-            self::extractStringList($data, 'types'),
+            self::normalizeFilters($filters),
         );
     }
 
     /**
-     * @param array<string, mixed> $data
+     * Example $value:
+     * [
+     *     ['type_id' => 'parking', 'tags' => ['a0f89579-cd7f-4d81-9aee-0512f756957e']],
+     *     ['type_id' => 'marketplace', 'tags' => []],
+     * ]
+     * or [] when no filters are selected.
      *
-     * @return list<string>
+     * @param list<array{type_id: string, tags: list<string>}> $value
+     * @return list<array{type_id: string, tags: list<string>}>
      */
-    private static function extractStringList(array $data, string $key): array
+    private static function normalizeFilters(array $value): array
     {
-        if (!array_key_exists($key, $data)) {
-            return [];
+        $filters = [];
+
+        foreach ($value as $index => $item) {
+            Assert::isArray($item, sprintf('Filter at index %d must be an object.', $index));
+
+            Assert::keyExists($item, 'type_id', sprintf('Filter at index %d is missing type_id.', $index));
+            Assert::stringNotEmpty($item['type_id'], sprintf('Filter at index %d type_id must not be empty.', $index));
+
+            $tags = $item['tags'] ?? [];
+            Assert::isArray($tags, sprintf('Filter at index %d tags must be an array.', $index));
+            Assert::allStringNotEmpty($tags, sprintf('Filter at index %d tags must be non-empty strings.', $index));
+
+            $filters[] = [
+                'type_id' => $item['type_id'],
+                'tags' => array_values($tags),
+            ];
         }
 
-        $value = $data[$key];
-
-        if (is_array($value)) {
-            return array_values(array_filter(
-                $value,
-                static fn (mixed $item): bool => is_string($item) && $item !== '',
-            ));
-        }
-
-        if (is_string($value) && $value !== '') {
-            return [$value];
-        }
-
-        return [];
+        return $filters;
     }
 }

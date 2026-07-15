@@ -10,6 +10,7 @@ use App\Application\Exception\FormValidationException;
 use App\Application\Exception\ServiceUnavailableException;
 use App\Application\Exception\UnauthorizedException;
 use App\Infrastructure\Http\Responder\ResponderInterface;
+use InvalidArgumentException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -57,6 +58,14 @@ abstract class AbstractAction
                     message: $exception->getMessage(),
                     statusCode: Response::HTTP_UNPROCESSABLE_ENTITY,
                     context: $exception->getContext(),
+                ),
+                $request,
+            );
+        } catch (InvalidArgumentException $exception) {
+            return $this->responder->respondError(
+                new ErrorResponse(
+                    message: $exception->getMessage(),
+                    statusCode: Response::HTTP_UNPROCESSABLE_ENTITY,
                 ),
                 $request,
             );

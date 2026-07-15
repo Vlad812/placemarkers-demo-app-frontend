@@ -232,8 +232,33 @@
             $container.empty();
             selectedTags.forEach(function(tagId) {
                 const tagName = $('.tag-checkbox[value="' + tagId + '"]').data('name') || tagId;
-                $container.append('<span class="badge bg-primary rounded-pill px-3 py-2">' + tagName + '</span>');
+                $container.append($('<span class="badge bg-primary rounded-pill px-3 py-2"></span>').text(tagName));
             });
+        }
+
+        function filterTagsBySelectedType() {
+            const fields = getNewFormFields();
+            const typeId = fields.$type.val() || 'default';
+            let visibleCount = 0;
+
+            $('.tag-option').each(function () {
+                const optionType = String($(this).data('type-id') || 'default');
+                const isVisible = optionType === typeId;
+                $(this).toggle(isVisible);
+                if (isVisible) {
+                    visibleCount += 1;
+                } else {
+                    $(this).find('.tag-checkbox').prop('checked', false);
+                }
+            });
+
+            $('.tags-type-empty-hint').prop('hidden', visibleCount > 0 || !$('.tag-option').length);
+
+            selectedTags = selectedTags.filter(function (tagId) {
+                const $checkbox = $('.tag-checkbox[value="' + tagId + '"]');
+                return $checkbox.length && String($checkbox.data('type-id') || 'default') === typeId;
+            });
+            renderSelectedTags();
         }
 
         function resetNewForm() {
@@ -245,7 +270,7 @@
             fields.$description.val('');
             selectedTags = [];
             $('.tag-checkbox').prop('checked', false);
-            renderSelectedTags();
+            filterTagsBySelectedType();
             removeDraftMarker();
         }
 
@@ -392,6 +417,7 @@
             fields.$description.closest('form').on('submit', function (event) {
                 event.preventDefault();
             });
+            fields.$type.on('change', filterTagsBySelectedType);
         }
 
         $('#placemark-edit-save').on('click', saveEditPlacemark);
@@ -402,13 +428,16 @@
 
         $('#save-tags-button').on('click', function() {
             selectedTags = [];
-            $('.tag-checkbox:checked').each(function() {
+            $('.tag-checkbox:visible:checked').each(function() {
                 selectedTags.push($(this).val());
             });
             renderSelectedTags();
         });
 
+        $('#placemark-tags-modal').on('show.bs.modal', filterTagsBySelectedType);
+
         bindNewForm();
+        filterTagsBySelectedType();
 
         const initMap = function () {
             mapInstance = new ymaps.Map('placemark-map', {

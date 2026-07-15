@@ -8,6 +8,7 @@ use App\Application\DTO\Api\HttpApiResult;
 use App\Application\Port\Api\SearchApiInterface;
 use App\Infrastructure\Service\Api\AccessTokenProviderInterface;
 use App\Infrastructure\Service\IncidentLoggerInterface;
+use JsonException;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
@@ -27,17 +28,16 @@ final readonly class SearchApiClient extends AbstractAuthenticatedHttpApiClient 
      * @param float $lat
      * @param float $lon
      * @param int $radiusMeters
-     * @param array $tags
-     * @param array $types
+     * @param array $filters
      * @return HttpApiResult
      * @throws TransportExceptionInterface
+     * @throws JsonException
      */
     public function search(
         float $lat,
         float $lon,
         int $radiusMeters,
-        array $tags = [],
-        array $types = [],
+        array $filters = [],
     ): HttpApiResult {
         $query = [
             'lat' => $lat,
@@ -45,12 +45,8 @@ final readonly class SearchApiClient extends AbstractAuthenticatedHttpApiClient 
             'radius' => $radiusMeters,
         ];
 
-        if ($tags !== []) {
-            $query['tags'] = $tags;
-        }
-
-        if ($types !== []) {
-            $query['types'] = $types;
+        if ($filters !== []) {
+            $query['filters'] = json_encode($filters, JSON_THROW_ON_ERROR);
         }
 
         return $this->executeRequest(

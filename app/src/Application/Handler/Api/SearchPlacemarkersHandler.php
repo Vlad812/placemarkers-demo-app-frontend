@@ -22,8 +22,7 @@ final readonly class SearchPlacemarkersHandler
                 $query->lat,
                 $query->lon,
                 $query->radius,
-                $query->tags,
-                $query->types,
+                $query->filters,
             ),
         );
     }

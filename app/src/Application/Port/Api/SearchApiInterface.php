@@ -9,15 +9,13 @@ use App\Application\DTO\Api\HttpApiResult;
 interface SearchApiInterface
 {
     /**
-     * @param list<string> $tags
-     * @param list<string> $types
+     * @param list<array{type_id: string, tags: list<string>}> $filters
      */
     public function search(
         float $lat,
         float $lon,
         int $radiusMeters,
-        array $tags = [],
-        array $types = [],
+        array $filters = [],
     ): HttpApiResult;
 
     public function getUserTags(): HttpApiResult;
