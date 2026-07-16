@@ -9,7 +9,7 @@
 - Bootstrap 5
 - jQuery
 
-Backend-for-Frontend сервис. JSON API-эндпоинты проксируют запросы в микросервисы `api-placemarkers-database`, `api-placemarkers-search` и `api-placemarkers-collection`.
+Backend-for-Frontend сервис. JSON API-эндпоинты проксируют запросы в микросервисы [`api-placemarkers-database`](https://github.com/Vlad812/placemarkers-demo-api-database.git), [`api-placemarkers-search`](https://github.com/Vlad812/placemarkers-demo-api-search.git) и [`api-placemarkers-collection`](https://github.com/Vlad812/placemarkers-demo-api-collection.git), а авторизация выполняется через [`auth-service`](https://github.com/Vlad812/placemarkers-demo-auth-service.git).
 
 **Авторизация (общее):** сессия (cookie). `app-frontend` выступает BFF-слоем перед `auth-service`: после входа через `/login` access token и refresh token, выданные `auth-service`, сохраняются на сервере в сессии, а клиент передаёт только session cookie, без заголовка `Authorization: Bearer`. Хранилище сессий вынесено в Redis и обслуживается стандартным Symfony Session компонентом. При истечении access token BFF может использовать сохранённый refresh token для запроса новой пары токенов в `auth-service`, не перекладывая эту логику на браузер.
 
