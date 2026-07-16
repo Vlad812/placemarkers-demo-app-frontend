@@ -876,11 +876,17 @@
                 });
 
                 const $tr = $('<tr>');
-                $tr.append($('<td class="ps-4 fw-medium">').text(collection.name));
-                $tr.append($('<td>').text(collection.placemarkersCount + ' ' + pluralizeMetki(collection.placemarkersCount)));
-                $tr.append($('<td class="text-muted small">').text(date));
+                $tr.append(
+                    $('<td class="ps-4 fw-medium collections-list-name">').append(
+                        $('<span class="collections-list-name__text">')
+                            .text(collection.name)
+                            .attr('title', collection.name)
+                    )
+                );
+                $tr.append($('<td class="collections-list-col-count">').text(collection.placemarkersCount + ' ' + pluralizeMetki(collection.placemarkersCount)));
+                $tr.append($('<td class="text-muted small collections-list-col-date">').text(date));
 
-                const $actionsTd = $('<td class="text-end pe-4">');
+                const $actionsTd = $('<td class="text-end pe-4 collections-list-col-actions">');
                 const $showBtn = $('<button type="button" class="btn btn-sm btn-outline-primary me-2">Показать</button>');
                 const $deleteBtn = $('<button type="button" class="btn btn-sm btn-outline-danger">Удалить</button>');
 

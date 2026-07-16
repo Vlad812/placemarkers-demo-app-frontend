@@ -458,6 +458,37 @@
     max-width: 42rem;
 }
 
+#collections-list-modal .placemark-edit-modal-dialog {
+    max-width: min(56rem, calc(100vw - 2rem));
+}
+
+#collections-list-modal .collections-list-table {
+    table-layout: fixed;
+    width: 100%;
+}
+
+#collections-list-modal .collections-list-col-count {
+    width: 7.5rem;
+    white-space: nowrap;
+}
+
+#collections-list-modal .collections-list-col-date {
+    width: 10rem;
+    white-space: nowrap;
+}
+
+#collections-list-modal .collections-list-col-actions {
+    width: 11.5rem;
+    white-space: nowrap;
+}
+
+#collections-list-modal .collections-list-name__text {
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
 .placemark-edit-modal-content {
     border: none;
     border-radius: 0.75rem;
