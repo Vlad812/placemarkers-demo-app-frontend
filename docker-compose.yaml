@@ -1,3 +1,15 @@
+x-app-environment: &app-environment
+  APP_ENV: dev
+  APP_DEBUG: 1
+  APP_SECRET: 75914121030ad559bbae482519258ce1
+  APP_RUNTIME: Baldinof\RoadRunnerBundle\Runtime\Runtime
+  JWT_PASSPHRASE: ""
+  DATABASE_SERVICE_URL: "http://api.placemarkers.local"
+  SEARCH_SERVICE_URL: "http://api.placemarkers.local"
+  COLLECTION_SERVICE_URL: "http://api.placemarkers.local"
+  AUTH_SERVICE_URL: "http://api.placemarkers.local"
+  REDIS_URL: redis://cs-redis:6379
+
 services:
 
   app-frontend-pm:
@@ -9,10 +21,7 @@ services:
     volumes:
       - ./app:/var/www/html
     environment:
-      APP_ENV: dev
-      APP_DEBUG: 1
-      APP_SECRET: 75914121030ad559bbae482519258ce1
-      APP_RUNTIME: Baldinof\RoadRunnerBundle\Runtime\Runtime
+      <<: *app-environment
       VAR_DUMPER_FORMAT: 'server'
       VAR_DUMPER_SERVER: 'buggregator:9912'
     labels:
@@ -47,6 +56,8 @@ services:
     container_name: app-frontend-pm-php-cli
     volumes:
       - ./app:/var/www/html
+    environment:
+      <<: *app-environment
     networks:
       - place_markers_net
 
